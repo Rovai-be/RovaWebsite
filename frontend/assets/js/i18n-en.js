@@ -18,7 +18,6 @@ window.ROVAI_TRANSLATIONS_EN = {
   "Hoofdnavigatie": "Main navigation",
   "Menu openen": "Open menu",
   "Menu sluiten": "Close menu",
-  "Taal": "Language",
   "Oplossingen": "Solutions",
   "Aanpak": "Approach",
   "Projecten": "Projects",

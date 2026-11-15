@@ -111,38 +111,79 @@
 .menu-toggle[aria-expanded="true"] span:first-child { top: 23px; transform: rotate(45deg); }
 .menu-toggle[aria-expanded="true"] span:last-child { top: 23px; transform: rotate(-45deg); }
 
+/* Language switch: one button, the orange thumb springs to the active language */
 .lang-switch {
-  display: inline-flex;
+  position: relative;
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr;
   padding: 3px;
-  gap: 2px;
   background: var(--surface-soft);
   border: 1px solid var(--line);
   border-radius: 999px;
+  cursor: pointer;
+  isolation: isolate;
+  transition: scale 0.2s var(--ease-out);
 }
 
-.lang-switch button {
+.lang-switch:active {
+  scale: 0.95;
+}
+
+.lang-switch > [lang] {
+  display: grid;
+  place-items: center;
   min-width: 40px;
   height: 34px;
-  padding: 0 0.7rem;
   color: var(--muted);
-  background: transparent;
-  border: 0;
-  border-radius: 999px;
   font-size: 0.76rem;
   font-weight: 800;
   letter-spacing: 0.04em;
-  cursor: pointer;
-  transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  transition: color 0.35s ease;
 }
 
-.lang-switch button:hover {
-  color: var(--text);
+.lang-switch[data-lang="nl"] > [lang="nl"],
+.lang-switch[data-lang="en"] > [lang="en"] {
+  color: #fff;
 }
 
-.lang-switch button[aria-pressed="true"] {
-  color: var(--text);
-  background: var(--surface);
-  box-shadow: 0 2px 8px rgba(25, 22, 16, 0.1);
+.lang-switch-thumb {
+  position: absolute;
+  z-index: -1;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  width: calc(50% - 3px);
+  background: var(--primary);
+  border-radius: 999px;
+  box-shadow: 0 4px 14px var(--primary-glow);
+}
+
+/* Only animate after the first paint, so a page opening in English doesn't slide on load */
+.lang-switch.is-ready .lang-switch-thumb {
+  transition: translate 0.6s var(--ease-spring);
+}
+
+.lang-switch[data-lang="en"] .lang-switch-thumb {
+  translate: 100% 0;
+}
+
+/* Hover nudges the thumb towards the other language, hinting that a click switches */
+.lang-switch[data-lang="nl"]:hover .lang-switch-thumb {
+  translate: 5px 0;
+}
+
+.lang-switch[data-lang="en"]:hover .lang-switch-thumb {
+  translate: calc(100% - 5px) 0;
+}
+
+.lang-switch.is-switching .lang-switch-thumb {
+  animation: lang-thumb-stretch 0.6s var(--ease-out);
+}
+
+@keyframes lang-thumb-stretch {
+  35% { scale: 1.45 0.8; }
+  65% { scale: 0.92 1.08; }
+  100% { scale: 1 1; }
 }
 
 /* Reusable elements */

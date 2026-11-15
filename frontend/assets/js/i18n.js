@@ -42,6 +42,9 @@
     return (lang === "en" && english.get(normalize(dutch))) || dutch;
   }
 
+  // Elements whose text changed during the current switch, so they can animate in
+  const changedElements = new Set();
+
   function translateText(node) {
     if (!node.nodeValue.trim()) return;
     if (!originalText.has(node)) originalText.set(node, node.nodeValue);
@@ -50,7 +53,10 @@
     const translated = translate(source);
     // Keep the surrounding whitespace so inline elements stay spaced correctly
     const next = translated === source ? source : source.match(/^\s*/)[0] + translated + source.match(/\s*$/)[0];
-    if (node.nodeValue !== next) node.nodeValue = next;
+    if (node.nodeValue !== next) {
+      node.nodeValue = next;
+      if (node.parentElement) changedElements.add(node.parentElement);
+    }
   }
 
   const hasTextAndElements = (element) =>
@@ -65,7 +71,10 @@
     }
 
     const next = translate(originalHtml.get(element));
-    if (element.innerHTML !== next) element.innerHTML = next;
+    if (element.innerHTML !== next) {
+      element.innerHTML = next;
+      changedElements.add(element);
+    }
     return true;
   }
 
@@ -94,8 +103,38 @@
   }
 
   function syncSwitches() {
-    document.querySelectorAll("[data-lang-option]").forEach((button) => {
-      button.setAttribute("aria-pressed", String(button.dataset.langOption === lang));
+    document.querySelectorAll("[data-lang-toggle]").forEach((button) => {
+      button.dataset.lang = lang;
+      button.setAttribute("aria-label", lang === "en" ? "Switch language to Dutch" : "Taal wisselen naar Engels");
+    });
+  }
+
+  // New text blurs in as a wave from the top of the screen down
+  function animateChangedText() {
+    const elements = [...changedElements];
+    changedElements.clear();
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !Element.prototype.animate) return;
+
+    const viewportHeight = window.innerHeight;
+    const visible = elements
+      .map((element) => ({ element, rect: element.getBoundingClientRect() }))
+      .filter(({ rect }) => rect.width > 0 && rect.bottom > 0 && rect.top < viewportHeight);
+
+    visible.forEach(({ element, rect }) => {
+      // A parent that animates already carries this element along
+      if (visible.some((other) => other.element !== element && other.element.contains(element))) return;
+      element.animate(
+        [
+          { opacity: 0, filter: "blur(8px)" },
+          { opacity: 1, filter: "blur(0)" },
+        ],
+        {
+          duration: 520,
+          delay: Math.max(rect.top, 0) / viewportHeight * 220,
+          easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+          fill: "backwards",
+        }
+      );
     });
   }
 
@@ -114,16 +153,28 @@
     lang = next;
     storeLanguage(lang);
     applyLanguage();
+    animateChangedText();
     document.dispatchEvent(new CustomEvent("rovai:languagechange", { detail: { lang } }));
   }
 
-  document.querySelectorAll("[data-lang-option]").forEach((button) => {
-    button.addEventListener("click", () => setLanguage(button.dataset.langOption));
+  document.querySelectorAll("[data-lang-toggle]").forEach((button) => {
+    button.addEventListener("click", () => {
+      // Restart the stretch animation, also on quick repeated clicks
+      button.classList.remove("is-switching");
+      void button.offsetWidth;
+      button.classList.add("is-switching");
+      setLanguage(lang === "en" ? "nl" : "en");
+    });
+    button.addEventListener("animationend", () => button.classList.remove("is-switching"));
   });
 
   if (lang === "en") applyLanguage();
   else syncSwitches();
+  changedElements.clear();
   document.documentElement.classList.remove("lang-pending");
+  requestAnimationFrame(() => {
+    document.querySelectorAll("[data-lang-toggle]").forEach((button) => button.classList.add("is-ready"));
+  });
 
   // Used by script.js and chat.js for text they generate themselves
   window.t = translate;

@@ -32,10 +32,11 @@
           <button class="menu-toggle" type="button" aria-label="Menu openen" aria-expanded="false" aria-controls="main-nav"><span></span><span></span></button>
           <div class="nav-links" id="main-nav">
             <a href="index.html">Home</a><a href="index.html#oplossingen">Oplossingen</a><a href="index.html#hoe-het-werkt">Aanpak</a><a href="pages/projecten.html">Projecten</a><a href="pages/about.html">Over Rovai</a><a class="nav-cta" href="pages/contact.html">Bespreek je idee <span aria-hidden="true">↗</span></a>
-            <div class="lang-switch" role="group" aria-label="Taal">
-              <button type="button" lang="nl" data-lang-option="nl" aria-pressed="true">NL</button>
-              <button type="button" lang="en" data-lang-option="en" aria-pressed="false">EN</button>
-            </div>
+            <button class="lang-switch" type="button" data-lang-toggle data-lang="nl" data-i18n-skip aria-label="Taal wisselen naar Engels">
+              <span class="lang-switch-thumb" aria-hidden="true"></span>
+              <span lang="nl">NL</span>
+              <span lang="en">EN</span>
+            </button>
           </div>
         </nav>
       </div>
