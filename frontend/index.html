@@ -30,7 +30,13 @@
     href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
     rel="stylesheet"
   >
-  <script>document.documentElement.classList.add('js');</script>
+  <script>
+    document.documentElement.classList.add('js');
+    // Hide the Dutch source text until i18n.js has switched the page to English
+    try {
+      if ((new URLSearchParams(location.search).get('lang') || localStorage.getItem('rovai-lang')) === 'en') document.documentElement.classList.add('lang-pending');
+    } catch (e) {}
+  </script>
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body class="home-page">
@@ -57,6 +63,10 @@
             <a href="pages/projecten.html">Projecten</a>
             <a href="pages/about.html">Over Rovai</a>
             <a class="nav-cta" href="pages/contact.html">Bespreek je idee <span aria-hidden="true">↗</span></a>
+            <div class="lang-switch" role="group" aria-label="Taal">
+              <button type="button" lang="nl" data-lang-option="nl" aria-pressed="true">NL</button>
+              <button type="button" lang="en" data-lang-option="en" aria-pressed="false">EN</button>
+            </div>
           </div>
         </nav>
       </div>
@@ -375,7 +385,7 @@
         </div>
         <div class="chat-header-info"><strong>Rovai Assistent</strong><span><i aria-hidden="true"></i> Online</span></div>
       </div>
-      <div class="chat-messages" id="chat-messages" aria-live="polite"></div>
+      <div class="chat-messages" id="chat-messages" aria-live="polite" data-i18n-skip></div>
       <div class="chat-input-row">
         <label for="chat-input" class="sr-only">Stel een vraag</label>
         <input class="chat-input" id="chat-input" type="text" placeholder="Stel een vraag..." autocomplete="off">
@@ -390,6 +400,8 @@
     </button>
   </div>
 
+  <script src="assets/js/i18n-en.js"></script>
+  <script src="assets/js/i18n.js"></script>
   <script src="assets/js/script.js"></script>
   <script src="assets/js/chat.js"></script>
 </body>

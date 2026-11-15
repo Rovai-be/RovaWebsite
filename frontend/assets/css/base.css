@@ -23,6 +23,17 @@ body.menu-open {
   overflow: hidden;
 }
 
+/* Set in <head> when English is chosen; i18n.js removes it once the page is translated.
+   The animation reveals the page anyway if that script never runs. */
+.lang-pending body {
+  visibility: hidden;
+  animation: lang-pending-fallback 0s 1.5s forwards;
+}
+
+@keyframes lang-pending-fallback {
+  to { visibility: visible; }
+}
+
 ::selection {
   color: #fff;
   background: var(--primary);

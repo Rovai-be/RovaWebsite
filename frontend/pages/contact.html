@@ -24,7 +24,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <script>document.documentElement.classList.add('js');</script>
+  <script>
+    document.documentElement.classList.add('js');
+    // Hide the Dutch source text until i18n.js has switched the page to English
+    try {
+      if ((new URLSearchParams(location.search).get('lang') || localStorage.getItem('rovai-lang')) === 'en') document.documentElement.classList.add('lang-pending');
+    } catch (e) {}
+  </script>
   <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body class="inner-page">
@@ -46,6 +52,10 @@
             <a href="projecten.html">Projecten</a>
             <a href="about.html">Over Rovai</a>
             <a class="nav-cta" href="contact.html" aria-current="page">Bespreek je idee <span aria-hidden="true">↗</span></a>
+            <div class="lang-switch" role="group" aria-label="Taal">
+              <button type="button" lang="nl" data-lang-option="nl" aria-pressed="true">NL</button>
+              <button type="button" lang="en" data-lang-option="en" aria-pressed="false">EN</button>
+            </div>
           </div>
         </nav>
       </div>
@@ -163,6 +173,8 @@
     <p class="cookie-text">Wij gebruiken optionele cookies om de website te verbeteren. Lees ons <a href="privacy.html">privacybeleid</a>.</p>
     <div class="cookie-actions"><button class="cookie-decline" id="cookie-decline" type="button">Weigeren</button><button class="cookie-accept" id="cookie-accept" type="button">Accepteren</button></div>
   </div>
+  <script src="../assets/js/i18n-en.js"></script>
+  <script src="../assets/js/i18n.js"></script>
   <script src="../assets/js/script.js"></script>
 </body>
 </html>

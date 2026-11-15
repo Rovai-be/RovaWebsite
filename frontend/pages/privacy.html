@@ -24,7 +24,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <script>document.documentElement.classList.add('js');</script>
+  <script>
+    document.documentElement.classList.add('js');
+    // Hide the Dutch source text until i18n.js has switched the page to English
+    try {
+      if ((new URLSearchParams(location.search).get('lang') || localStorage.getItem('rovai-lang')) === 'en') document.documentElement.classList.add('lang-pending');
+    } catch (e) {}
+  </script>
   <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body class="inner-page privacy-page">
@@ -46,6 +52,10 @@
             <a href="projecten.html">Projecten</a>
             <a href="about.html">Over Rovai</a>
             <a class="nav-cta" href="contact.html">Bespreek je idee <span aria-hidden="true">↗</span></a>
+            <div class="lang-switch" role="group" aria-label="Taal">
+              <button type="button" lang="nl" data-lang-option="nl" aria-pressed="true">NL</button>
+              <button type="button" lang="en" data-lang-option="en" aria-pressed="false">EN</button>
+            </div>
           </div>
         </nav>
       </div>
@@ -57,6 +67,7 @@
           <p class="eyebrow">Juridisch</p>
           <h1>Privacybeleid</h1>
           <p class="privacy-updated">Laatst bijgewerkt: 21 september 2026</p>
+          <p class="privacy-updated" data-lang-only="en" hidden>This English version is a courtesy translation. In case of any discrepancy, the Dutch version prevails.</p>
         </div>
       </section>
 
@@ -174,7 +185,7 @@
           <p>Cookies zijn kleine tekstbestanden die op jouw toestel geplaatst worden wanneer je een website bezoekt. Ze houden standaard internetgegevens en informatie over jouw bezoek bij. Meer algemene uitleg vind je op <a href="https://allaboutcookies.org" target="_blank" rel="noopener">allaboutcookies.org</a>.</p>
           <p>Onze website gebruikt maar twee soorten:</p>
           <ul>
-            <li><strong>Noodzakelijk en functioneel</strong>: we onthouden in de lokale opslag van jouw browser of je de cookiebanner aanvaard of geweigerd hebt, zodat we die keuze niet telkens opnieuw moeten vragen. De gespreksgeschiedenis van de chatbot wordt tijdelijk in de sessieopslag van jouw browser bewaard. Hiervoor is geen toestemming nodig en deze gegevens verlaten jouw browser niet.</li>
+            <li><strong>Noodzakelijk en functioneel</strong>: we onthouden in de lokale opslag van jouw browser of je de cookiebanner aanvaard of geweigerd hebt en in welke taal je de website bekijkt, zodat we die keuzes niet telkens opnieuw moeten vragen. De gespreksgeschiedenis van de chatbot wordt tijdelijk in de sessieopslag van jouw browser bewaard. Hiervoor is geen toestemming nodig en deze gegevens verlaten jouw browser niet.</li>
             <li><strong>Analytisch (optioneel)</strong>: Google Analytics 4 wordt pas geladen nadat je op "Accepteren" klikt. Het meet hoe bezoekers onze website gebruiken, met geanonimiseerd IP-adres. Weiger je, dan wordt Google Analytics helemaal niet geladen.</li>
           </ul>
           <p>We gebruiken geen advertentiecookies, geen trackingpixels van sociale media en we delen geen gegevens met advertentiepartners.</p>
@@ -236,6 +247,8 @@
     <p class="cookie-text">Wij gebruiken optionele cookies om de website te verbeteren. Lees ons <a href="privacy.html">privacybeleid</a>.</p>
     <div class="cookie-actions"><button class="cookie-decline" id="cookie-decline" type="button">Weigeren</button><button class="cookie-accept" id="cookie-accept" type="button">Accepteren</button></div>
   </div>
+  <script src="../assets/js/i18n-en.js"></script>
+  <script src="../assets/js/i18n.js"></script>
   <script src="../assets/js/script.js"></script>
 </body>
 </html>

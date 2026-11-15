@@ -52,9 +52,11 @@ function setMenu(open) {
   if (!menuButton || !navLinks) return;
   navLinks.classList.toggle("open", open);
   menuButton.setAttribute("aria-expanded", String(open));
-  menuButton.setAttribute("aria-label", open ? "Menu sluiten" : "Menu openen");
+  menuButton.setAttribute("aria-label", t(open ? "Menu sluiten" : "Menu openen"));
   document.body.classList.toggle("menu-open", open);
 }
+
+document.addEventListener("rovai:languagechange", () => setMenu(navLinks?.classList.contains("open") ?? false));
 
 menuButton?.addEventListener("click", () => {
   setMenu(menuButton.getAttribute("aria-expanded") !== "true");
@@ -117,10 +119,10 @@ if (contactForm) {
     const submitButton = contactForm.querySelector("button[type='submit']");
     const success = contactForm.querySelector(".form-success");
     const errorMessage = contactForm.querySelector(".form-error");
-    const originalLabel = submitButton?.textContent || "Verstuur bericht";
+    const originalLabel = submitButton?.textContent || t("Verstuur bericht");
 
     if (submitButton) {
-      submitButton.textContent = "Even versturen…";
+      submitButton.textContent = t("Even versturen…");
       submitButton.disabled = true;
     }
     if (success) success.style.display = "none";
@@ -193,7 +195,7 @@ if (portraitStack) {
     portraitCards.forEach((card) => {
       const other = portraitCards.find((item) => item !== card);
       const action = card.querySelector("[data-portrait-action]");
-      if (action && other) action.textContent = `klik om ${other.dataset.portraitName} naar voren te halen`;
+      if (action && other) action.textContent = t("klik om {name} naar voren te halen").replace("{name}", other.dataset.portraitName);
     });
   }
 
@@ -234,6 +236,7 @@ if (portraitStack) {
     portraitCards.forEach((card) => card.addEventListener("click", swapPortraits));
     portraitStack.classList.add("is-interactive");
     syncPortraitLabels();
+    document.addEventListener("rovai:languagechange", syncPortraitLabels);
   }
 }
 
@@ -325,4 +328,6 @@ function requestScrollUpdate() {
 
 window.addEventListener("scroll", requestScrollUpdate, { passive: true });
 window.addEventListener("resize", requestScrollUpdate);
+// The process meter label comes from data-step-label, which i18n.js translates
+document.addEventListener("rovai:languagechange", requestScrollUpdate);
 updateOnScroll();

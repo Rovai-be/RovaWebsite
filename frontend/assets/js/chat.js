@@ -7,6 +7,7 @@ const REQUEST_TIMEOUT_MS = 30000;
 const MAX_HISTORY_MESSAGES = 10;
 const CONTACT_CTA_TOKEN = "[CONTACT_CTA]";
 const HISTORY_STORAGE_KEY = "rovai_chat_history";
+const WELCOME_MESSAGE = "Hallo! Ik ben de assistent van Rovai. Waarmee kan ik je helpen?";
 
 const toggleBtn = document.getElementById("chat-toggle");
 const chatWindow = document.getElementById("chat-window");
@@ -17,6 +18,7 @@ const sendBtn = document.getElementById("chat-send");
 let history = loadHistory();
 let isOpen = false;
 let hasWelcomed = history.length > 0;
+let welcomeBubble = null;
 
 renderHistory();
 
@@ -24,13 +26,18 @@ function setChatOpen(nextOpen, { focusInput = true } = {}) {
   isOpen = nextOpen;
   chatWindow.classList.toggle("open", isOpen);
   toggleBtn.setAttribute("aria-expanded", String(isOpen));
-  toggleBtn.setAttribute("aria-label", isOpen ? "Chat sluiten" : "Chat openen");
+  toggleBtn.setAttribute("aria-label", t(isOpen ? "Chat sluiten" : "Chat openen"));
   if (isOpen && history.length === 0 && !hasWelcomed) {
-    addBubble("bot", "Hallo! Ik ben de assistent van Rovai. Waarmee kan ik je helpen?");
+    welcomeBubble = addBubble("bot", t(WELCOME_MESSAGE));
     hasWelcomed = true;
   }
   if (isOpen && focusInput) inputEl.focus();
 }
+
+document.addEventListener("rovai:languagechange", () => {
+  toggleBtn.setAttribute("aria-label", t(isOpen ? "Chat sluiten" : "Chat openen"));
+  if (welcomeBubble) welcomeBubble.innerHTML = renderMarkdown(t(WELCOME_MESSAGE));
+});
 
 toggleBtn?.addEventListener("click", () => {
   setChatOpen(!isOpen);
@@ -132,7 +139,7 @@ function addContactCta() {
   const link = document.createElement("a");
   link.href = "pages/contact.html";
   link.className = "chat-cta-link";
-  link.textContent = "Bespreek je idee →";
+  link.textContent = t("Bespreek je idee →");
   wrapper.appendChild(link);
   messagesEl.appendChild(wrapper);
   messagesEl.scrollTop = messagesEl.scrollHeight;
@@ -174,7 +181,7 @@ async function sendMessage() {
     const data = await res.json();
     typing.remove();
 
-    const rawReply = data.reply || "Ik kon geen antwoord ophalen. Probeer het gerust opnieuw.";
+    const rawReply = data.reply || t("Ik kon geen antwoord ophalen. Probeer het gerust opnieuw.");
     const hasCta = rawReply.includes(CONTACT_CTA_TOKEN);
     const reply = rawReply.replace(CONTACT_CTA_TOKEN, "").trim();
 
@@ -186,8 +193,8 @@ async function sendMessage() {
     typing.remove();
     const message =
       err.name === "AbortError"
-        ? "Het duurt langer dan verwacht. Probeer het straks opnieuw."
-        : "Er ging iets mis. Probeer het later opnieuw.";
+        ? t("Het duurt langer dan verwacht. Probeer het straks opnieuw.")
+        : t("Er ging iets mis. Probeer het later opnieuw.");
     addBubble("bot", message);
   } finally {
     clearTimeout(timeoutId);
