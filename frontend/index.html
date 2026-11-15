@@ -381,8 +381,8 @@
     </button>
     <div class="chat-window" id="chat-window" role="dialog" aria-label="Chat met Rovai">
       <div class="chat-header">
-        <div class="chat-avatar" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M12 2L5 11h5.5L9 18l8-9h-5.5L12 2Z" fill="currentColor"/></svg>
+        <div class="chat-avatar chat-avatar-logo" aria-hidden="true">
+          <img src="assets/img/logo-chip.png" alt="" width="289" height="256">
         </div>
         <div class="chat-header-info"><strong>Rovai Assistent</strong><span><i aria-hidden="true"></i> Online</span></div>
       </div>
@@ -396,7 +396,17 @@
       </div>
     </div>
     <button class="chat-toggle" id="chat-toggle" type="button" aria-label="Chat openen" aria-expanded="false">
-      <svg class="chat-open-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10Z"/></svg>
+      <svg class="chat-open-icon chat-face" viewBox="0 0 60 60" fill="none" aria-hidden="true">
+        <g class="chat-face-eyes">
+          <g class="chat-face-blink" fill="currentColor">
+            <circle cx="22" cy="22.5" r="3.7"/>
+            <circle cx="38" cy="22.5" r="3.7"/>
+          </g>
+        </g>
+        <g class="chat-face-smile">
+          <path d="M18.5 33.5c2.2 5.8 6.4 9.8 11.5 9.8s9.3-4 11.5-9.8" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+        </g>
+      </svg>
       <svg class="chat-close-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
     </button>
   </div>

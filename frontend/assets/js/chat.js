@@ -209,3 +209,96 @@ document.addEventListener("keydown", (event) => {
   setChatOpen(false, { focusInput: false });
   toggleBtn.focus();
 });
+
+// Face on the toggle: breathes, blinks and now and then follows the mouse, all at random intervals so it feels alive
+const faceEyes = toggleBtn?.querySelector(".chat-face-eyes");
+const faceBlink = toggleBtn?.querySelector(".chat-face-blink");
+const faceSmile = toggleBtn?.querySelector(".chat-face-smile");
+const FACE_MAX_OFFSET = 2.2;
+
+let faceTarget = { x: 0, y: 0 };
+let faceCurrent = { x: 0, y: 0 };
+let faceFollowsMouse = false;
+let facePointer = null;
+let faceFrame = 0;
+
+const randomBetween = (min, max) => min + Math.random() * (max - min);
+
+function renderFace() {
+  faceCurrent.x += (faceTarget.x - faceCurrent.x) * 0.07;
+  faceCurrent.y += (faceTarget.y - faceCurrent.y) * 0.07;
+  faceEyes.style.transform = `translate(${faceCurrent.x}px, ${faceCurrent.y}px)`;
+  // The smile moves less than the eyes, which gives the face a bit of depth
+  faceSmile.style.transform = `translate(${faceCurrent.x * 0.45}px, ${faceCurrent.y * 0.45}px)`;
+
+  const settled = Math.abs(faceTarget.x - faceCurrent.x) < 0.02 && Math.abs(faceTarget.y - faceCurrent.y) < 0.02;
+  faceFrame = settled ? 0 : requestAnimationFrame(renderFace);
+}
+
+function lookTowards(x, y) {
+  faceTarget = { x, y };
+  if (!faceFrame) faceFrame = requestAnimationFrame(renderFace);
+}
+
+function lookAtPointer({ clientX, clientY }) {
+  const rect = toggleBtn.getBoundingClientRect();
+  const dx = clientX - (rect.left + rect.width / 2);
+  const dy = clientY - (rect.top + rect.height / 2);
+  const distance = Math.hypot(dx, dy) || 1;
+  if (!faceFollowsMouse) return;
+
+  const reach = Math.min(distance / 140, 1) * FACE_MAX_OFFSET;
+  lookTowards((dx / distance) * reach, (dy / distance) * reach);
+}
+
+// Mostly looks straight ahead; now and then it takes a good look at the cursor (or somewhere else),
+// then looks ahead again and waits a random while before the next look
+function lookAround() {
+  if (Math.random() < 0.7 && facePointer && !isOpen) {
+    faceFollowsMouse = true;
+    lookAtPointer(facePointer);
+  } else {
+    const angle = Math.random() * Math.PI * 2;
+    lookTowards(Math.cos(angle) * FACE_MAX_OFFSET * 0.7, Math.sin(angle) * FACE_MAX_OFFSET * 0.7);
+  }
+
+  setTimeout(() => {
+    faceFollowsMouse = false;
+    lookTowards(0, 0);
+    setTimeout(lookAround, randomBetween(5000, 11000));
+  }, randomBetween(2500, 4500));
+}
+
+function blinkFace() {
+  faceBlink.animate(
+    [{ transform: "scaleY(1)" }, { transform: "scaleY(0.1)" }, { transform: "scaleY(1)" }],
+    { duration: 170, easing: "ease-in-out" }
+  );
+}
+
+function scheduleBlink() {
+  setTimeout(() => {
+    blinkFace();
+    if (Math.random() < 0.25) setTimeout(blinkFace, 240);
+    scheduleBlink();
+  }, randomBetween(2200, 6500));
+}
+
+function breatheToggle() {
+  const breath = toggleBtn.animate(
+    [{ scale: "1" }, { scale: String(randomBetween(1.065, 1.1)) }, { scale: "1" }],
+    { duration: randomBetween(2800, 4600), easing: "ease-in-out" }
+  );
+  breath.onfinish = () => setTimeout(breatheToggle, randomBetween(150, 1400));
+}
+
+if (faceEyes && faceBlink && faceSmile && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  window.addEventListener("pointermove", (event) => {
+    facePointer = { clientX: event.clientX, clientY: event.clientY };
+    if (!isOpen) lookAtPointer(facePointer);
+  }, { passive: true });
+
+  setTimeout(lookAround, randomBetween(3000, 7000));
+  scheduleBlink();
+  breatheToggle();
+}

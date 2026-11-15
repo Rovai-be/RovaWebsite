@@ -98,6 +98,27 @@
   transform: rotate(0) scale(1);
 }
 
+/* Face on the chat toggle; chat.js makes it breathe, blink and now and then follow the mouse */
+.chat-face {
+  width: 100%;
+  height: 100%;
+}
+
+.chat-face-blink,
+.chat-face-smile path {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.chat-face-smile path {
+  transform-origin: center top;
+  transition: scale 0.35s var(--ease-spring);
+}
+
+.chat-toggle:hover .chat-face-smile path {
+  scale: 1.1 1.2;
+}
+
 .chat-window {
   display: flex;
   width: min(390px, calc(100vw - 1.5rem));
@@ -142,6 +163,16 @@
   background: var(--primary);
   border-radius: 12px;
   box-shadow: 0 8px 24px var(--primary-glow);
+}
+
+.chat-avatar-logo {
+  background: var(--surface);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.chat-avatar-logo img {
+  width: 31px;
+  height: auto;
 }
 
 .chat-header-info strong,
