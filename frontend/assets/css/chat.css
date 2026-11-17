@@ -98,16 +98,59 @@
   transform: rotate(0) scale(1);
 }
 
-/* Face on the chat toggle; chat.js makes it breathe, blink and now and then follow the mouse */
+/* Chippy, the chip from the logo, on the chat toggle; chat.js makes it breathe, blink,
+   now and then follow the mouse and send little data pulses over its traces */
 .chat-face {
   width: 100%;
   height: 100%;
 }
 
+.chat-face-trace {
+  stroke: currentColor;
+  transition: stroke 0.25s ease;
+}
+
+.chat-face-trace.is-accent,
+.chat-face-trace.is-lit {
+  stroke: var(--primary);
+}
+
+.chat-face-trace circle {
+  transition: fill 0.25s ease;
+}
+
+.chat-face-trace.is-lit circle {
+  fill: var(--primary);
+}
+
+/* The toggle turns orange on hover, so the orange accents switch to dark */
+.chat-toggle:hover .chat-face-trace.is-accent,
+.chat-toggle:hover .chat-face-trace.is-lit {
+  stroke: var(--dark);
+}
+
+.chat-toggle:hover .chat-face-trace.is-lit circle {
+  fill: var(--dark);
+}
+
+.chat-face-traces,
 .chat-face-blink,
 .chat-face-smile path {
   transform-box: fill-box;
   transform-origin: center;
+}
+
+.chat-face-traces {
+  transition: scale 0.35s var(--ease-spring);
+}
+
+.chat-face-blink,
+.chat-face-happy {
+  transition: opacity 0.2s ease;
+}
+
+.chat-face-happy {
+  opacity: 0;
 }
 
 .chat-face-smile path {
@@ -115,8 +158,20 @@
   transition: scale 0.35s var(--ease-spring);
 }
 
+.chat-toggle:hover .chat-face-traces {
+  scale: 1.08;
+}
+
+.chat-toggle:hover .chat-face-blink {
+  opacity: 0;
+}
+
+.chat-toggle:hover .chat-face-happy {
+  opacity: 1;
+}
+
 .chat-toggle:hover .chat-face-smile path {
-  scale: 1.1 1.2;
+  scale: 1.2 1.45;
 }
 
 .chat-window {

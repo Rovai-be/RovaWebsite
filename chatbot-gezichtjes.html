@@ -1,0 +1,1047 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chatbot-gezichtjes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f4f1ea;
+  --bg-deep: #eae5da;
+  --surface: #fffdf9;
+  --text: #111210;
+  --muted: #65675f;
+  --muted-light: #9a9d94;
+  --line: rgba(17, 18, 16, 0.13);
+  --primary: #ff6b1a;
+  --primary-heading: #e55208;
+  --primary-dark: #c63f00;
+  --primary-light: #fff0e6;
+  --primary-glow: rgba(255, 107, 26, 0.24);
+  --dark: #111210;
+  --dark-soft: #1b1d19;
+  --radius: 22px;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3 {
+  margin: 0;
+  font-family: "Space Grotesk", "Manrope", sans-serif;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+code { font-size: 0.92em; background: var(--bg-deep); padding: 1px 6px; border-radius: 6px; }
+:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
+
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+
+/* Header */
+header { padding: 64px 0 8px; }
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--primary-heading);
+}
+.eyebrow::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--primary); }
+h1 { margin-top: 14px; font-size: clamp(2.3rem, 5.4vw, 4rem); max-width: 15ch; }
+h1 em { font-style: normal; color: var(--primary-heading); }
+.lede { max-width: 62ch; margin: 18px 0 0; color: var(--muted); font-size: 1.08rem; }
+.hints { display: flex; flex-wrap: wrap; gap: 8px; margin: 24px 0 0; padding: 0; list-style: none; }
+.hints li {
+  padding: 7px 14px; font-size: 0.88rem; font-weight: 600;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
+}
+.hints b { color: var(--primary-dark); }
+.favs { margin: 18px 0 0; font-size: 0.92rem; color: var(--muted); min-height: 1.5em; }
+.favs strong { color: var(--text); }
+
+/* Real-size strip */
+.strip {
+  margin: 32px 0 0; padding: 22px 22px 18px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+}
+.strip-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 6px 16px; margin-bottom: 18px; }
+.strip-head h2 { font-size: 1.15rem; }
+.strip-head p { margin: 0; color: var(--muted); font-size: 0.88rem; }
+.strip-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 18px 6px; }
+.strip-item {
+  display: flex; flex-direction: column; align-items: center; gap: 9px;
+  padding: 4px 0; background: none; border: 0; border-radius: 12px; cursor: pointer;
+  font: inherit; font-size: 0.78rem; font-weight: 700; color: var(--muted);
+}
+.strip-item:hover > span:last-child { color: var(--text); }
+
+/* Cards */
+.section-title { margin: 56px 0 0; font-size: clamp(1.4rem, 2.4vw, 1.8rem); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 20px; margin: 22px 0 0; }
+.card {
+  display: flex; flex-direction: column; overflow: hidden; scroll-margin-top: 24px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.card.is-fav { border-color: rgba(255, 107, 26, 0.55); box-shadow: 0 0 0 3px var(--primary-glow); }
+.stage {
+  position: relative; display: grid; place-items: center; height: 210px;
+  background: radial-gradient(circle at 50% 42%, #fffaf2 0%, var(--bg-deep) 78%);
+  border-bottom: 1px solid var(--line);
+}
+.num { position: absolute; left: 16px; top: 13px; font-family: "Space Grotesk", sans-serif; font-weight: 600; font-size: 0.85rem; color: var(--muted-light); }
+.stage-small {
+  position: absolute; right: 14px; bottom: 12px;
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  font-size: 0.66rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted-light);
+}
+.card-body { display: flex; flex: 1; flex-direction: column; gap: 10px; padding: 20px 22px 22px; }
+.card h3 { font-size: 1.5rem; }
+.tagline { margin: -4px 0 0; color: var(--primary-dark); font-weight: 700; font-size: 0.93rem; }
+.desc { margin: 0; color: var(--muted); font-size: 0.95rem; }
+.does { display: grid; gap: 6px; margin: 2px 0 0; padding: 0; list-style: none; font-size: 0.89rem; }
+.does li { display: flex; gap: 9px; }
+.does li::before { content: ""; flex: none; width: 6px; height: 6px; margin-top: 0.58em; border-radius: 50%; background: var(--primary); }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.tags span { padding: 4px 10px; font-size: 0.74rem; font-weight: 700; color: var(--primary-dark); background: var(--primary-light); border-radius: 999px; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 10px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 7px; padding: 9px 16px;
+  font: inherit; font-size: 0.88rem; font-weight: 700; color: var(--text);
+  background: transparent; border: 1px solid var(--line); border-radius: 999px; cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.btn:hover { border-color: var(--text); }
+.btn svg { width: 16px; height: 16px; }
+.btn-dark { color: #fff; background: var(--dark); border-color: var(--dark); }
+.btn-dark:hover { background: var(--primary); border-color: var(--primary); }
+.fav[aria-pressed="true"] { color: var(--primary-dark); background: var(--primary-light); border-color: rgba(255, 107, 26, 0.5); }
+.fav[aria-pressed="true"] svg path { fill: currentColor; }
+.foot { margin: 40px 0 0; padding-bottom: 130px; color: var(--muted); font-size: 0.92rem; }
+
+/* The chat toggle, same look as on the site */
+.toggle {
+  --tb: #111210;
+  --ink: #ffffff;
+  --acc: #ff6b1a;
+  position: relative; flex: none; display: grid; place-items: center; padding: 0; overflow: hidden;
+  background: var(--tb); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 50%;
+  box-shadow: 0 14px 40px rgba(17, 18, 16, 0.24);
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.25s var(--ease-out), box-shadow 0.25s ease;
+}
+.toggle::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(circle at 70% 20%, rgba(255, 255, 255, 0.18), transparent 40%);
+}
+.toggle svg { position: relative; display: block; width: 100%; height: 100%; }
+.toggle.is-hover { --tb: #ff6b1a; --acc: #111210; box-shadow: 0 16px 42px var(--primary-glow); transform: translateY(-3px) scale(1.03); }
+.toggle[data-hover="keep"].is-hover { --tb: #1b1d19; --acc: #ff6b1a; box-shadow: 0 0 0 3px rgba(255, 107, 26, 0.45), 0 16px 42px var(--primary-glow); }
+.toggle svg * { transition: fill 0.25s ease, stroke 0.25s ease; }
+.f-ink { fill: var(--ink); } .s-ink { stroke: var(--ink); }
+.f-acc { fill: var(--acc); } .s-acc { stroke: var(--acc); }
+.f-bg { fill: var(--tb); }   .s-bg { stroke: var(--tb); }
+.f-or { fill: #ff6b1a; }     .s-or { stroke: #ff6b1a; }
+.f-dk { fill: #111210; }     .s-dk { stroke: #111210; }
+.f-wh { fill: #fffdf9; }
+.ch-tr.lit { stroke: var(--acc); }
+.ch-tr.lit circle { fill: var(--acc); }
+.toggle svg .px { fill: var(--ink); opacity: 0.1; transition: opacity 0.14s ease, fill 0.14s ease; }
+.toggle svg .px.on { opacity: 1; }
+.toggle svg .px.or { fill: #ff6b1a; }
+
+/* Try-out in the corner, like on the site */
+.corner { position: fixed; right: 1.4rem; bottom: 1.4rem; z-index: 50; display: flex; align-items: center; gap: 12px; }
+.corner-label {
+  padding: 8px 14px; font-size: 0.85rem; font-weight: 600; color: var(--muted);
+  background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
+  box-shadow: 0 14px 40px rgba(25, 22, 16, 0.08);
+}
+.corner-label b { color: var(--text); }
+.corner-slot { display: block; }
+
+@media (max-width: 600px) {
+  .wrap { padding: 0 16px; }
+  header { padding-top: 40px; }
+  .strip { padding: 18px 14px 14px; }
+  .corner-label { display: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <span class="eyebrow">Rovai · brainstorm chatknop</span>
+  <h1>Een gezicht voor de <em>chatknop</em></h1>
+  <p class="lede">Een gewone smiley is wat braaf. Hieronder 13 ideetjes, van subtiel (bovenaan) tot gedurfd (onderaan), allemaal in de stijl van de site: zwart rondje, wit en oranje. Elk ventje heeft z'n eigen gewoontes, dus neem even de tijd en kijk wat ze doen.</p>
+  <ul class="hints">
+    <li><b>Beweeg je muis</b>, ze kijken mee</li>
+    <li><b>Hover</b> over een gezicht, elk reageert anders</li>
+    <li><b>Muis 7 sec stil</b>, iemand valt in slaap</li>
+    <li><b>Schud wild</b> met je muis, iemand wordt duizelig</li>
+    <li><b>Rechtsonder</b> test je ze in de hoek</li>
+  </ul>
+  <p class="favs" id="favs"></p>
+</header>
+
+<main class="wrap">
+  <section class="strip" aria-labelledby="strip-title">
+    <div class="strip-head">
+      <h2 id="strip-title">Allemaal op echte grootte</h2>
+      <p>60px, net als de knop op de site. Klik er een aan voor de uitleg.</p>
+    </div>
+    <div class="strip-row" id="strip-row"></div>
+  </section>
+
+  <h2 class="section-title">13 ideetjes, van subtiel naar gedurfd</h2>
+  <div class="grid" id="grid"></div>
+
+  <p class="foot">Alles is pure SVG met een beetje JavaScript, net zoals de huidige smiley. Elk van deze past dus zo in <code>chat.js</code>.</p>
+</main>
+
+<div class="corner" id="corner">
+  <div class="corner-label"><b class="corner-name"></b> · klik voor de volgende</div>
+  <span class="corner-slot"></span>
+</div>
+
+<script>
+/* ---------- small helpers ---------- */
+const rand = (a, b) => a + Math.random() * (b - a);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const mix = (a, b, t) => a + (b - a) * t;
+const ease = (cur, target, rate, dt) => cur + (target - cur) * (1 - Math.exp(-rate * dt));
+const n = v => Math.round(v * 100) / 100;
+const smooth = x => x * x * (3 - 2 * x);
+const bump = p => (p < 0 ? 0 : Math.sin(Math.PI * p));
+const plateau = (p, edge = 0.2) => (p < 0 ? 0 : p < edge ? smooth(p / edge) : p > 1 - edge ? smooth((1 - p) / edge) : 1);
+const T = (el, v) => el.setAttribute('transform', v);
+const op = (el, v) => el.setAttribute('opacity', n(clamp(v, 0, 1)));
+const mv = (x, y) => `translate(${n(x)} ${n(y)})`;
+const rot = (a, cx, cy) => `rotate(${n(a)} ${cx} ${cy})`;
+const at = (cx, cy, sx, sy = sx) => `translate(${cx} ${cy}) scale(${n(sx)} ${n(sy)}) translate(${-cx} ${-cy})`;
+
+// Fires now and then, at a random interval
+function every(min, max) {
+  let next = -1;
+  return t => {
+    if (next < 0) { next = t + rand(min, max); return false; }
+    if (t < next) return false;
+    next = t + rand(min, max);
+    return true;
+  };
+}
+// A one-shot animation: p(t) gives progress 0..1 while playing, -1 otherwise
+function once() {
+  let start = -1, dur = 1;
+  return {
+    play(t, d) { start = t; dur = d; },
+    p(t) {
+      if (start < 0) return -1;
+      const p = (t - start) / dur;
+      if (p >= 1) { start = -1; return -1; }
+      return p;
+    },
+  };
+}
+// Smooth closed curve through points (Catmull-Rom)
+function closedPath(p) {
+  const N = p.length;
+  let d = `M${n(p[0][0])} ${n(p[0][1])}`;
+  for (let i = 0; i < N; i++) {
+    const p0 = p[(i - 1 + N) % N], p1 = p[i], p2 = p[(i + 1) % N], p3 = p[(i + 2) % N];
+    d += `C${n(p1[0] + (p2[0] - p0[0]) / 6)} ${n(p1[1] + (p2[1] - p0[1]) / 6)} ${n(p2[0] - (p3[0] - p1[0]) / 6)} ${n(p2[1] - (p3[1] - p1[1]) / 6)} ${n(p2[0])} ${n(p2[1])}`;
+  }
+  return d + 'Z';
+}
+const qs = svg => sel => svg.querySelector(sel);
+
+/* ---------- the characters ---------- */
+const CHARS = [
+{
+  id: 'moody', name: 'Moody', tagline: 'Je huidige smiley, met gevoel',
+  desc: 'In rust exact de smiley die je nu hebt, maar hij reageert op wat je doet. De veiligste upgrade.',
+  does: ['Valt in slaap als je 7 sec niks doet (zzz) en schrikt wakker', 'Wordt duizelig als je wild met je muis schudt', 'Hover: hartjesogen en een grote lach'],
+  tags: ['Veilige keuze', 'Subtiel'],
+  svg() {
+    const heart = (cx, cy) => `<path transform="translate(${cx} ${cy})" d="M0 3.6C-5 .2-4.7-3.8-2.3-4-1.1-4.1-.3-3.2 0-2.3 .3-3.2 1.1-4.1 2.3-4 4.7-3.8 5 .2 0 3.6Z"/>`;
+    let sp = '';
+    for (let a = 0; a <= Math.PI * 4.2; a += 0.35) sp += (sp ? 'L' : 'M') + n(Math.cos(a) * 0.34 * a) + ' ' + n(Math.sin(a) * 0.34 * a);
+    return `
+      <g class="md-eyes">
+        <g class="md-open"><circle class="f-ink" cx="22" cy="22.5" r="3.7"/><circle class="f-ink" cx="38" cy="22.5" r="3.7"/></g>
+        <path class="md-closed s-ink" d="M18.4 23q3.6 2.8 7.2 0M34.4 23q3.6 2.8 7.2 0" stroke-width="2.3" stroke-linecap="round" opacity="0"/>
+        <g class="md-hearts f-ink" opacity="0"><g class="md-h">${heart(22, 22.5)}</g><g class="md-h">${heart(38, 22.5)}</g></g>
+        <g class="md-spiral s-ink" stroke-width="1.5" stroke-linecap="round" opacity="0"><path class="md-sp" d="${sp}"/><path class="md-sp" d="${sp}"/></g>
+      </g>
+      <g class="md-mouths">
+        <path class="md-smile s-ink" d="M18.5 33.5c2.2 5.8 6.4 9.8 11.5 9.8s9.3-4 11.5-9.8" stroke-width="2.6" stroke-linecap="round"/>
+        <path class="md-grin f-ink" d="M18 32.6H42c-1.4 6.8-5.8 10.8-12 10.8s-10.6-4-12-10.8Z" opacity="0"/>
+        <ellipse class="md-o s-ink" cx="30" cy="37.5" rx="3" ry="3.6" stroke-width="2.4" opacity="0"/>
+        <path class="md-sleep s-ink" d="M25.5 38q4.5 2.4 9 0" stroke-width="2.4" stroke-linecap="round" opacity="0"/>
+        <path class="md-wavy s-ink" d="M19.5 38q2.6-2.6 5.2 0t5.2 0 5.2 0 5.2 0" stroke-width="2.2" stroke-linecap="round" opacity="0"/>
+      </g>
+      <g class="md-zzz f-ink" font-family="Space Grotesk, Manrope, sans-serif" font-weight="700" opacity="0">
+        <text class="md-z1" x="39.5" y="18" font-size="8">z</text><text class="md-z2" x="45" y="12.5" font-size="5.6">z</text>
+      </g>`;
+  },
+  init(svg) {
+    const q = qs(svg), qa = s => [...svg.querySelectorAll(s)];
+    const eyes = q('.md-eyes'), open = q('.md-open'), openEyes = qa('.md-open circle'), closed = q('.md-closed');
+    const hearts = q('.md-hearts'), hs = qa('.md-h'), spiral = q('.md-spiral'), sps = qa('.md-sp');
+    const mouths = q('.md-mouths'), smile = q('.md-smile'), grin = q('.md-grin'), o = q('.md-o'), sleep = q('.md-sleep'), wavy = q('.md-wavy');
+    const zzz = q('.md-zzz'), z1 = q('.md-z1'), z2 = q('.md-z2');
+    const ops = new Map();
+    const fade = (el, target, dt, rate = 12) => {
+      const v = ease(ops.has(el) ? ops.get(el) : +(el.getAttribute('opacity') ?? 1), target, rate, dt);
+      ops.set(el, v); op(el, v);
+    };
+    let dizzyUntil = 0, surpriseUntil = 0, wasAsleep = false, sleepAmt = 0, surp = 0;
+    return s => {
+      const t = s.t, dt = s.dt;
+      if (s.shake > 1300) dizzyUntil = t + 1.8;
+      const asleep = s.idle > 7 && !s.hover;
+      if (wasAsleep && !asleep) surpriseUntil = t + 1;
+      wasAsleep = asleep;
+      const mode = s.hover ? 'love' : t < dizzyUntil ? 'dizzy' : t < surpriseUntil ? 'surprise' : asleep ? 'sleep' : 'normal';
+      fade(open, mode === 'normal' || mode === 'surprise' ? 1 : 0, dt);
+      fade(closed, mode === 'sleep' ? 1 : 0, dt, 6);
+      fade(hearts, mode === 'love' ? 1 : 0, dt);
+      fade(spiral, mode === 'dizzy' ? 1 : 0, dt);
+      fade(smile, mode === 'normal' ? 1 : 0, dt);
+      fade(grin, mode === 'love' ? 1 : 0, dt);
+      fade(o, mode === 'surprise' ? 1 : 0, dt);
+      fade(sleep, mode === 'sleep' ? 1 : 0, dt, 6);
+      fade(wavy, mode === 'dizzy' ? 1 : 0, dt);
+      fade(zzz, mode === 'sleep' ? 1 : 0, dt, 4);
+      sleepAmt = ease(sleepAmt, mode === 'sleep' ? 1 : 0, 3, dt);
+      surp = ease(surp, mode === 'surprise' ? 1 : 0, 10, dt);
+      const lk = 1 - sleepAmt;
+      T(eyes, mv(s.lx * 2.2 * lk, s.ly * 2.2 * lk + sleepAmt * 1.2));
+      const sc = 1 + 0.3 * surp;
+      openEyes.forEach((c, i) => T(c, at(i ? 38 : 22, 22.5, sc, sc * (1 - 0.9 * s.blink))));
+      const beat = 1 + 0.14 * Math.sin(t * 7) ** 2;
+      hs.forEach((h, i) => T(h, at(i ? 38 : 22, 22.5, beat)));
+      sps.forEach((p, i) => T(p, `translate(${i ? 38 : 22} 22.5) rotate(${n((t * 400) % 360)})`));
+      T(mouths, mv(s.lx * lk, s.ly * lk));
+      T(z1, mv(0, Math.sin(t * 1.7) * 1.2));
+      T(z2, mv(0, Math.sin(t * 1.7 + 1.4) * 1.2));
+    };
+  },
+},
+{
+  id: 'rovi', name: 'Rovi', tagline: 'Klantenservice met headset',
+  desc: 'Bijna je huidige smiley, maar met een headset. Zegt meteen: hier helpt iemand je.',
+  does: ["Praat af en toe in z'n microfoontje", 'Kijkt mee met je muis', 'Hover: knipoog en een bredere lach'],
+  tags: ['Duidelijk', 'Subtiel'],
+  svg: () => `
+    <path class="s-ink" d="M13 31A17 17 0 0 1 47 31" stroke-width="2.6" stroke-linecap="round"/>
+    <rect class="f-acc" x="9.4" y="26.4" width="6.4" height="11.6" rx="3.2"/>
+    <rect class="f-acc" x="44.2" y="26.4" width="6.4" height="11.6" rx="3.2"/>
+    <path class="s-ink" d="M47.2 37.6Q47.4 45.8 39 46.2" stroke-width="2" stroke-linecap="round"/>
+    <g class="hs-mic"><rect class="f-acc" x="33.2" y="43.8" width="6.2" height="4.8" rx="2.4"/></g>
+    <g class="hs-face">
+      <g class="hs-eyes"><circle class="hs-el f-ink" cx="24" cy="26.6" r="3.3"/><circle class="f-ink" cx="36" cy="26.6" r="3.3"/></g>
+      <path class="hs-wink s-ink" d="M21 27.4q3-3 6 0" stroke-width="2.2" stroke-linecap="round" opacity="0"/>
+      <g class="hs-mouth">
+        <path class="hs-smile s-ink" d="M23.4 34c1.7 3.8 4 5.7 6.6 5.7s4.9-1.9 6.6-5.7" stroke-width="2.4" stroke-linecap="round"/>
+        <ellipse class="hs-talk f-ink" cx="30" cy="36.6" rx="2.8" ry="1" opacity="0"/>
+      </g>
+    </g>`,
+  init(svg) {
+    const q = qs(svg);
+    const face = q('.hs-face'), eyes = q('.hs-eyes'), eyeL = q('.hs-el'), wink = q('.hs-wink');
+    const mouth = q('.hs-mouth'), smile = q('.hs-smile'), talk = q('.hs-talk'), mic = q('.hs-mic');
+    const talkT = every(5, 10), talkA = once();
+    return s => {
+      const t = s.t;
+      if (talkT(t) && !s.hover) talkA.play(t, 2.2);
+      const talking = plateau(talkA.p(t), 0.1);
+      const open = talking * (0.5 + 0.5 * Math.sin(t * 17)) * (0.6 + 0.4 * Math.sin(t * 5.3));
+      T(face, mv(s.lx * 2.2, s.ly * 1.8));
+      T(eyes, at(30, 26.6, 1, 1 - 0.9 * s.blink));
+      op(eyeL, 1 - s.hv); op(wink, s.hv);
+      T(mouth, mv(-s.lx * 1.1, -s.ly * 0.9) + ' ' + at(30, 34, 1 + 0.12 * s.hv, 1 + 0.2 * s.hv));
+      op(smile, 1 - talking); op(talk, talking);
+      talk.setAttribute('ry', n(0.9 + 2.3 * open));
+      T(mic, at(36.3, 46.2, 1 + 0.18 * open));
+    };
+  },
+},
+{
+  id: 'bubbel', name: 'Bubbel', tagline: 'De chatballon als ventje',
+  desc: 'Het chat-icoontje zelf krijgt een gezicht. Zo snapt iedereen meteen wat de knop doet.',
+  does: ['Typt af en toe met drie puntjes, net als een echte chat', "Huppelt soms op z'n staartje", 'Hover: blije huppeltjes en een grote lach'],
+  tags: ['Duidelijk', 'Chat'],
+  svg: () => `
+    <g class="bu-all">
+      <path class="f-ink" d="M24 15.5H36A11.5 11.5 0 0 1 47.5 27V30A11.5 11.5 0 0 1 36 41.5H28.4L20.6 47.4Q18.8 48.7 19.1 46.6L20.2 40.4A11.5 11.5 0 0 1 12.5 30V27A11.5 11.5 0 0 1 24 15.5Z"/>
+      <ellipse class="f-or" cx="19.6" cy="31.6" rx="2.2" ry="1.25" opacity="0.65"/><ellipse class="f-or" cx="40.4" cy="31.6" rx="2.2" ry="1.25" opacity="0.65"/>
+      <g class="bu-look">
+        <g class="bu-eyes"><ellipse class="f-dk" cx="24.8" cy="26.2" rx="2.2" ry="2.9"/><ellipse class="f-dk" cx="35.2" cy="26.2" rx="2.2" ry="2.9"/><circle class="f-wh" cx="25.6" cy="25.1" r="0.75"/><circle class="f-wh" cx="36" cy="25.1" r="0.75"/></g>
+        <path class="bu-smile s-dk" d="M25.6 32.6q4.4 3.8 8.8 0" stroke-width="2" stroke-linecap="round"/>
+        <path class="bu-grin f-dk" d="M25 31.6h10q-.6 5.4-5 5.4t-5-5.4z" opacity="0"/>
+        <g class="bu-dots" opacity="0"><circle class="f-dk" cx="25.6" cy="33.4" r="1.7"/><circle class="f-dk" cx="30" cy="33.4" r="1.7"/><circle class="f-dk" cx="34.4" cy="33.4" r="1.7"/></g>
+      </g>
+    </g>`,
+  init(svg) {
+    const q = qs(svg);
+    const all = q('.bu-all'), look = q('.bu-look'), eyes = q('.bu-eyes'), smile = q('.bu-smile'), grin = q('.bu-grin'), dots = q('.bu-dots');
+    const dotEls = [...dots.children];
+    const typeT = every(5, 9), typeA = once(), hopT = every(4, 8), hopA = once();
+    let typing = 0;
+    return s => {
+      const t = s.t;
+      if (typeT(t) && !s.hover) typeA.play(t, 2.8);
+      const tp = typeA.p(t);
+      typing = ease(typing, tp >= 0 && !s.hover ? 1 : 0, 12, s.dt);
+      if (hopT(t) && !s.hover && tp < 0) hopA.play(t, 0.5);
+      const air = Math.max(bump(hopA.p(t)) * 0.7, Math.abs(Math.sin(t * 7.5)) * s.hv);
+      T(all, mv(s.lx * 0.8, -3.4 * air) + ' ' + at(30, 48, 1 - 0.04 * air, 1 + 0.05 * air));
+      const lx = mix(s.lx, 0.55, typing), ly = mix(s.ly, -0.6, typing);
+      T(look, mv(lx * 2.2, ly * 1.6));
+      T(eyes, at(30, 26.2, 1, 1 - 0.9 * s.blink));
+      op(smile, (1 - typing) * (1 - s.hv)); op(grin, s.hv); op(dots, typing * (1 - s.hv));
+      dotEls.forEach((d, i) => T(d, mv(0, -1.8 * Math.max(0, Math.sin(t * 9 - i * 0.9)))));
+    };
+  },
+},
+{
+  id: 'chippy', name: 'Chippy', tagline: 'Het Rovai-logo komt tot leven',
+  desc: 'De chip uit jullie logo krijgt een gezichtje. Zo is je merk letterlijk de assistent.',
+  does: ['Datapulsjes flitsen over de printbanen, alsof hij nadenkt', "Volgt je muis met z'n blokoogjes", 'Hover: alle banen lichten op en hij lacht'],
+  tags: ['Merk-sterk', 'Tech'],
+  svg() {
+    const traces = [];
+    const sides = [[0, -1], [1, 0], [0, 1], [-1, 0]];
+    const lens = [5.5, 8.6, 5.5];
+    sides.forEach(([dx, dy], si) => {
+      [-6, 0, 6].forEach((o, i) => {
+        const len = lens[i];
+        const x1 = 30 + dx * 12 + (dx === 0 ? o : 0), y1 = 30 + dy * 12 + (dy === 0 ? o : 0);
+        const x2 = x1 + dx * len, y2 = y1 + dy * len;
+        const cx = x1 + dx * (len + 1.7), cy = y1 + dy * (len + 1.7);
+        traces.push(`<g class="ch-tr ${(si + i) % 2 ? 's-acc' : 's-ink'}"><path d="M${n(x1)} ${n(y1)}L${n(x2)} ${n(y2)}"/><circle class="f-bg" cx="${n(cx)}" cy="${n(cy)}" r="1.75" stroke-width="1.4"/></g>`);
+      });
+    });
+    return `
+      <g class="ch-traces" stroke-width="1.8" stroke-linecap="round">${traces.join('')}</g>
+      <rect class="s-ink f-bg" x="18" y="18" width="24" height="24" rx="6" stroke-width="2.4"/>
+      <g class="ch-eyes"><rect class="f-ink" x="23.8" y="24.7" width="3.4" height="5.6" rx="1.7"/><rect class="f-ink" x="32.8" y="24.7" width="3.4" height="5.6" rx="1.7"/></g>
+      <path class="ch-happy s-ink" d="M23.5 28.6l2-2.3 2 2.3M32.5 28.6l2-2.3 2 2.3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0"/>
+      <path class="ch-mouth s-ink" d="M26.3 34.2q3.7 3.2 7.4 0" stroke-width="2" stroke-linecap="round"/>`;
+  },
+  init(svg) {
+    const q = qs(svg);
+    const eyes = q('.ch-eyes'), happy = q('.ch-happy'), mouth = q('.ch-mouth'), traces = q('.ch-traces');
+    const trs = [...svg.querySelectorAll('.ch-tr')];
+    const pulse = every(0.18, 0.75);
+    const lit = new Map();
+    return s => {
+      if (pulse(s.t) || (s.hv > 0.6 && Math.random() < 0.3)) {
+        const g = trs[Math.floor(Math.random() * trs.length)];
+        g.classList.add('lit');
+        lit.set(g, s.t + (s.hover ? 0.25 : 0.42));
+      }
+      for (const [g, until] of lit) if (s.t > until) { g.classList.remove('lit'); lit.delete(g); }
+      T(eyes, mv(s.lx * 2.2, s.ly * 1.8) + ' ' + at(30, 27.5, 1, 1 - 0.88 * s.blink));
+      T(happy, mv(s.lx * 2.2, s.ly * 1.8));
+      op(eyes, 1 - s.hv); op(happy, s.hv);
+      T(mouth, mv(s.lx, s.ly * 0.8) + ' ' + at(30, 34.5, 1 + 0.2 * s.hv, 1 + 0.45 * s.hv));
+      T(traces, at(30, 30, 1 + 0.08 * s.hv));
+    };
+  },
+},
+{
+  id: 'pixel', name: 'Pixel', tagline: 'Gezichtje van LED-lampjes', hover: 'keep',
+  desc: 'Een rond LED-scherm waar het gezicht pixel voor pixel op verschijnt. Retro en tech tegelijk.',
+  does: ['Kijkt pixel per pixel met je mee en knipoogt', 'Zegt af en toe HOI!', 'Hover: hartjesogen en een grote lach'],
+  tags: ['Tech', 'Retro'],
+  svg() {
+    let out = '';
+    for (let r = 0; r < 11; r++) for (let c = 0; c < 11; c++) {
+      const x = 30 + (c - 5) * 4.1, y = 30 + (r - 5) * 4.1;
+      if (Math.hypot(x - 30, y - 30) <= 24.2) out += `<circle class="px" data-k="${c},${r}" cx="${n(x)}" cy="${n(y)}" r="1.45"/>`;
+    }
+    return out;
+  },
+  init(svg) {
+    const cells = new Map();
+    svg.querySelectorAll('.px').forEach(el => cells.set(el.dataset.k, el));
+    const cur = new Map();
+    const HOI = [[0,3],[0,4],[0,5],[0,6],[0,7],[1,5],[2,3],[2,4],[2,5],[2,6],[2,7],[4,3],[4,4],[4,5],[4,6],[4,7],[5,3],[5,7],[6,3],[6,4],[6,5],[6,6],[6,7],[8,3],[8,4],[8,5],[8,6],[8,7],[10,3],[10,4],[10,5],[10,7]];
+    const HEART = [[0,0],[2,0],[0,1],[1,1],[2,1],[1,2]];
+    const EYE = [[0,0],[1,0],[0,1],[1,1]], LINE = [[0,1],[1,1]];
+    const SMILE = [[3,7],[4,8],[5,8],[6,8],[7,7]];
+    const SMIRK = [[4,8],[5,8],[6,8],[7,7]];
+    const GRIN = [[2,6],[3,6],[4,6],[5,6],[6,6],[7,6],[8,6],[3,7],[7,7],[4,8],[5,8],[6,8]];
+    const hoiT = every(9, 16), hoiA = once(), winkT = every(6, 11), winkA = once();
+    return s => {
+      const next = new Map();
+      const put = (pts, ox = 0, oy = 0, col = 'w') => pts.forEach(([c, r]) => next.set(`${c + ox},${r + oy}`, col));
+      if (!s.hover && hoiT(s.t)) hoiA.play(s.t, 2);
+      if (!s.hover && winkT(s.t)) winkA.play(s.t, 0.5);
+      const hoi = hoiA.p(s.t) >= 0, wink = winkA.p(s.t) >= 0;
+      if (s.hover) {
+        put(HEART, 1, 2, 'o'); put(HEART, 7, 2, 'o'); put(GRIN);
+      } else if (hoi) {
+        put(HOI);
+      } else {
+        const ox = clamp(Math.round(s.lx * 1.4), -1, 1), oy = clamp(Math.round(s.ly * 1.4), -1, 1);
+        const shut = s.blink > 0.35;
+        put(shut ? LINE : EYE, 2 + ox, 3 + oy);
+        put(shut || wink ? LINE : EYE, 7 + ox, 3 + oy);
+        put(wink ? SMIRK : SMILE, clamp(Math.round(s.lx * 0.8), -1, 1), 0);
+      }
+      for (const k of cur.keys()) if (!next.has(k)) { const el = cells.get(k); if (el) el.classList.remove('on', 'or'); }
+      for (const [k, col] of next) if (cur.get(k) !== col) { const el = cells.get(k); if (el) { el.classList.add('on'); el.classList.toggle('or', col === 'o'); } }
+      cur.clear();
+      for (const [k, v] of next) cur.set(k, v);
+    };
+  },
+},
+{
+  id: 'bliep', name: 'Bliep', tagline: 'Klassiek robotje',
+  desc: 'Wit robothoofd met een schermpje als gezicht. Meteen duidelijk: je praat met een bot, maar wel een vriendelijke.',
+  does: ['Oranje LED-oogjes die meekijken', 'Scant af en toe van links naar rechts', 'Hover: antenne wiebelt en de oogjes lachen'],
+  tags: ['Herkenbaar', 'Speels'],
+  svg: () => `
+    <g class="rb-all">
+      <g class="rb-ant"><path class="s-ink" d="M30 19.5V12.6" stroke-width="2" stroke-linecap="round"/><circle class="rb-bulb f-acc" cx="30" cy="10.6" r="2.9"/></g>
+      <rect class="f-acc" x="9.6" y="27.8" width="4.6" height="9.6" rx="2.3"/>
+      <rect class="f-acc" x="45.8" y="27.8" width="4.6" height="9.6" rx="2.3"/>
+      <rect class="f-ink" x="12.8" y="18.8" width="34.4" height="27.6" rx="10"/>
+      <rect class="f-dk" x="16.8" y="23" width="26.4" height="19" rx="7"/>
+      <g class="rb-look">
+        <g class="rb-eyes"><rect class="f-or" x="21.4" y="27.6" width="4.6" height="6.8" rx="2.3"/><rect class="f-or" x="34" y="27.6" width="4.6" height="6.8" rx="2.3"/></g>
+        <path class="rb-happy s-or" d="M21.3 32l2.4-2.8 2.4 2.8M33.9 32l2.4-2.8 2.4 2.8" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" opacity="0"/>
+      </g>
+      <g class="rb-mlook">
+        <path class="rb-mouth s-or" d="M27.4 37.8h5.2" stroke-width="1.7" stroke-linecap="round"/>
+        <path class="rb-smile s-or" d="M26.6 37q3.4 2.8 6.8 0" stroke-width="1.7" stroke-linecap="round" opacity="0"/>
+      </g>
+    </g>`,
+  init(svg) {
+    const q = qs(svg);
+    const all = q('.rb-all'), ant = q('.rb-ant'), bulb = q('.rb-bulb'), look = q('.rb-look'), eyes = q('.rb-eyes'), happy = q('.rb-happy');
+    const mlook = q('.rb-mlook'), mouth = q('.rb-mouth'), smile = q('.rb-smile');
+    let a = 0, v = 0, was = false;
+    const bulbT = every(1.8, 4.5), bulbA = once(), scanT = every(8, 14), scanA = once();
+    return s => {
+      const t = s.t;
+      if (s.hover && !was) v += 320;
+      was = s.hover;
+      v += (-a * 260 - v * 7) * s.dt;
+      a += v * s.dt;
+      if (bulbT(t)) bulbA.play(t, 0.5);
+      T(bulb, at(30, 10.6, 1 + 0.35 * bump(bulbA.p(t))));
+      if (scanT(t) && !s.hover) scanA.play(t, 1.6);
+      const sp = scanA.p(t);
+      let lx = s.lx, ly = s.ly;
+      if (sp >= 0) { const k = plateau(sp, 0.15); lx = mix(lx, Math.sin(sp * Math.PI * 2), k); ly = mix(ly, 0, k); }
+      T(all, mv(s.lx * 0.9, s.ly * 0.6));
+      T(ant, rot(a + s.hv * Math.sin(t * 10) * 14 - s.lx * 6, 30, 19.5));
+      T(look, mv(lx * 3, ly * 2));
+      T(eyes, at(30, 31, 1, 1 - 0.9 * s.blink));
+      op(eyes, 1 - s.hv); op(happy, s.hv);
+      T(mlook, mv(lx * 2.2, ly * 1.6));
+      op(mouth, 1 - s.hv); op(smile, s.hv);
+    };
+  },
+},
+{
+  id: 'kiekeboe', name: 'Kiekeboe', tagline: 'Gluurt over de rand', hover: 'keep',
+  desc: 'Zit verstopt achter een muurtje en komt pas tevoorschijn als je muis dichterbij komt. Superleuk om te ontdekken.',
+  does: ["Enkel z'n oogjes piepen boven de rand", 'Komt omhoog als je muis nadert', 'Hover: springt op en zwaait'],
+  tags: ['Interactief', 'Speels'],
+  svg: () => `
+    <g class="pk-pop">
+      <circle class="f-or" cx="30" cy="31" r="14"/>
+      <g class="pk-face">
+        <g class="pk-eyes"><ellipse class="f-dk" cx="25" cy="28.6" rx="2.3" ry="3"/><ellipse class="f-dk" cx="35" cy="28.6" rx="2.3" ry="3"/><circle class="f-wh" cx="25.8" cy="27.5" r="0.8"/><circle class="f-wh" cx="35.8" cy="27.5" r="0.8"/></g>
+        <path class="pk-smile s-dk" d="M25.4 34.6q4.6 4 9.2 0" stroke-width="2" stroke-linecap="round"/>
+      </g>
+    </g>
+    <rect class="f-bg" x="0" y="48" width="60" height="12"/>
+    <path class="s-ink" d="M8.5 48H51.5" stroke-width="1.6" stroke-linecap="round" opacity="0.5"/>
+    <circle class="f-or" cx="20" cy="48.2" r="3.2"/>
+    <g class="pk-wave"><circle class="f-or" cx="0" cy="0" r="3.2"/></g>`,
+  init(svg) {
+    const q = qs(svg);
+    const pop = q('.pk-pop'), face = q('.pk-face'), eyes = q('.pk-eyes'), smile = q('.pk-smile'), wave = q('.pk-wave');
+    let r = 0, rv = 0;
+    const peekT = every(4, 8), peekA = once();
+    return s => {
+      const t = s.t;
+      if (peekT(t) && s.near < 0.2 && !s.hover) peekA.play(t, 1.8);
+      const self = plateau(peekA.p(t), 0.25) * 0.65;
+      const target = Math.max(smooth(clamp(s.near * 1.15, 0, 1)), s.hover ? 1 : 0, self);
+      rv += ((target - r) * 120 - rv * 13) * s.dt;
+      r += rv * s.dt;
+      T(pop, mv(s.lx * 1.2 * r, (1 - r) * 18.5));
+      T(face, mv(s.lx * 2, s.ly * 1.4 - (1 - r) * 1.2));
+      T(eyes, at(30, 28.6, 1, 1 - 0.9 * s.blink));
+      op(smile, (r - 0.45) * 2.5);
+      T(wave, mv(mix(40, 45.5, s.hv) + Math.sin(t * 13) * 2.4 * s.hv, mix(48.2, 31, s.hv)));
+    };
+  },
+},
+{
+  id: 'blobbie', name: 'Blobbie', tagline: 'Een zacht slijmpje', breath: false,
+  desc: 'Een oranje blob die nooit helemaal stilstaat. Voelt zacht en vriendelijk, en valt op in de hoek van het scherm.',
+  does: ['Wiebelt constant een beetje', 'Springt af en toe op', "Hover: wordt plat, wiebelt en doet z'n mond open"],
+  tags: ['Opvallend', 'Zacht'],
+  svg: () => `
+    <path class="bl-body f-acc"/>
+    <g class="bl-face">
+      <g class="bl-eyes">
+        <circle class="f-wh" cx="24" cy="34" r="5"/><circle class="f-wh" cx="36" cy="34" r="5"/>
+        <g class="bl-pupils"><circle class="f-dk" cx="24" cy="34" r="2.7"/><circle class="f-dk" cx="36" cy="34" r="2.7"/><circle class="f-wh" cx="25" cy="32.9" r="0.95"/><circle class="f-wh" cx="37" cy="32.9" r="0.95"/></g>
+      </g>
+      <path class="bl-mouth s-bg" d="M27.4 42q2.6 2.4 5.2 0" stroke-width="1.8" stroke-linecap="round"/>
+      <path class="bl-open f-bg" d="M26.6 41.4h6.8q-.4 4.4-3.4 4.4t-3.4-4.4z" opacity="0"/>
+    </g>`,
+  init(svg) {
+    const q = qs(svg);
+    const body = q('.bl-body'), face = q('.bl-face'), eyes = q('.bl-eyes'), pupils = q('.bl-pupils'), mouth = q('.bl-mouth'), open = q('.bl-open');
+    const N = 10;
+    const hopT = every(5, 10), hopA = once(), landA = once();
+    let hopping = false;
+    return s => {
+      const t = s.t;
+      if (hopT(t) && !s.hover) { hopA.play(t, 0.62); hopping = true; }
+      const hp = hopA.p(t);
+      if (hopping && hp < 0) { hopping = false; landA.play(t, 0.35); }
+      const air = bump(hp), land = bump(landA.p(t));
+      const jig = s.hv * Math.sin(t * 15) * 0.035;
+      const sx = 1 + 0.1 * s.hv + jig - 0.05 * air + 0.1 * land;
+      const sy = 1 - 0.13 * s.hv - jig + 0.08 * air - 0.14 * land;
+      const hop = -6 * air;
+      const lean = s.lx * 3.2;
+      const pts = [];
+      for (let i = 0; i < N; i++) {
+        const a = (i / N) * Math.PI * 2 - Math.PI / 2;
+        const r = 18 * (1 + 0.05 * Math.sin(t * 1.7 + i * 1.9) + 0.035 * Math.sin(t * 2.6 + i * 3.1));
+        const yr = Math.sin(a) * r;
+        pts.push([30 + Math.cos(a) * r * sx + lean * (1 - (yr + 18) / 36), 40 + (yr - 18) * sy + 18 + hop]);
+      }
+      body.setAttribute('d', closedPath(pts));
+      T(face, mv(lean * 0.67, 24 * (1 - sy) + hop) + ' ' + at(30, 36, sx, 1));
+      T(eyes, at(30, 34, 1, 1 - 0.9 * s.blink));
+      T(pupils, mv(s.lx * 2, s.ly * 2));
+      op(mouth, 1 - s.hv); op(open, s.hv);
+    };
+  },
+},
+{
+  id: 'boe', name: 'Boe', tagline: 'Een klein spookje', breath: false,
+  desc: 'Zweeft rustig op en neer onderaan je scherm. Schattig zonder kinderachtig te worden.',
+  does: ["Zweeft met een golvend 'rokje'", 'Wordt soms even doorzichtig', "Hover: armpjes omhoog, 'boe!'"],
+  tags: ['Schattig', 'Speels'],
+  svg: () => `
+    <ellipse class="bo-shadow f-ink" cx="30" cy="53.5" rx="9" ry="1.5" opacity="0.16"/>
+    <g class="bo-all">
+      <g class="bo-fade">
+        <g class="bo-arm-l"><ellipse class="f-ink" cx="14.8" cy="37.6" rx="4.4" ry="2.2"/></g>
+        <g class="bo-arm-r"><ellipse class="f-ink" cx="45.2" cy="37.6" rx="4.4" ry="2.2"/></g>
+        <path class="bo-body f-ink"/>
+        <ellipse class="f-or" cx="21.8" cy="34.8" rx="2.1" ry="1.2" opacity="0.7"/><ellipse class="f-or" cx="38.2" cy="34.8" rx="2.1" ry="1.2" opacity="0.7"/>
+      </g>
+      <g class="bo-face">
+        <g class="bo-eyes"><ellipse class="f-dk" cx="25.4" cy="29.4" rx="2.3" ry="3.1"/><ellipse class="f-dk" cx="34.6" cy="29.4" rx="2.3" ry="3.1"/><circle class="f-wh" cx="26.2" cy="28.3" r="0.8"/><circle class="f-wh" cx="35.4" cy="28.3" r="0.8"/></g>
+        <ellipse class="bo-mouth f-dk" cx="30" cy="35.4" rx="1.5" ry="1.3"/>
+      </g>
+    </g>`,
+  init(svg) {
+    const q = qs(svg);
+    const shadow = q('.bo-shadow'), all = q('.bo-all'), fade = q('.bo-fade'), armL = q('.bo-arm-l'), armR = q('.bo-arm-r');
+    const body = q('.bo-body'), face = q('.bo-face'), eyes = q('.bo-eyes'), mouth = q('.bo-mouth');
+    const phaseT = every(9, 16), phaseA = once();
+    return s => {
+      const t = s.t;
+      const fl = Math.sin(t * 1.9) * 1.8 - s.hv * 1.5;
+      T(all, mv(s.lx * 0.8, fl));
+      T(shadow, at(30, 53.5, 1 + fl * 0.06, 1));
+      op(shadow, 0.16 + fl * 0.02);
+      let d = 'M17 28A13 13 0 0 1 43 28';
+      for (let i = 0; i <= 18; i++) d += `L${n(43 - (26 * i) / 18)} ${n(44 + 2.3 * Math.sin((i / 18) * Math.PI * 5 + t * 4.2))}`;
+      body.setAttribute('d', d + 'Z');
+      if (phaseT(t) && !s.hover) phaseA.play(t, 1.8);
+      op(fade, 1 - 0.68 * plateau(phaseA.p(t), 0.25));
+      const sway = Math.sin(t * 2.1) * 9;
+      const up = s.hv * (80 + Math.sin(t * 14) * 12);
+      T(armL, rot(sway + up, 19, 36.4));
+      T(armR, rot(-sway - up, 41, 36.4));
+      T(face, mv(s.lx * 2.2, s.ly * 1.6));
+      const big = 1 + 0.12 * s.hv;
+      T(eyes, at(30, 29.4, big, big * (1 - 0.9 * s.blink)));
+      mouth.setAttribute('rx', n(1.5 + 1.1 * s.hv));
+      mouth.setAttribute('ry', n(1.3 + 2 * s.hv));
+      mouth.setAttribute('cy', n(35.4 + 1.2 * s.hv));
+    };
+  },
+},
+{
+  id: 'vos', name: 'Vos', tagline: 'Oranje vosje als mascotte', hover: 'keep',
+  desc: 'Jullie merkkleur is oranje, dus een vosje is een logische mascotte. Slim en snel, net als goede automatisering.',
+  does: ['Oortjes flapperen af en toe', "Snuffelt met z'n neusje", "Hover: kantelt z'n kop en kijkt blij"],
+  tags: ['Mascotte', 'Merkkleur'],
+  svg: () => `
+    <g class="fx-all">
+      <g class="fx-ear-l"><path class="f-or s-or" d="M14.8 27.6L16.4 11.2 27.2 20.4Z" stroke-width="1.4" stroke-linejoin="round"/><path class="f-dk" d="M17.8 15.8L18.2 24.2 23.4 21Z"/></g>
+      <g class="fx-ear-r"><path class="f-or s-or" d="M45.2 27.6L43.6 11.2 32.8 20.4Z" stroke-width="1.4" stroke-linejoin="round"/><path class="f-dk" d="M42.2 15.8L41.8 24.2 36.6 21Z"/></g>
+      <path class="f-or" d="M13 27Q14 19.5 22 19.5H38Q46 19.5 47 27Q47.5 33 41 39L32.6 46.3Q30 48.4 27.4 46.3L19 39Q12.5 33 13 27Z"/>
+      <path class="f-wh" d="M13.3 29.4Q19.4 35.6 25.6 33.8Q28.6 35.6 30 39.6Q31.4 35.6 34.4 33.8Q40.6 35.6 46.7 29.4Q46.4 34.4 41 39L32.6 46.3Q30 48.4 27.4 46.3L19 39Q13.6 34.4 13.3 29.4Z"/>
+      <g class="fx-look">
+        <g class="fx-eyes"><ellipse class="f-dk" cx="23.4" cy="28.2" rx="2.1" ry="2.7"/><ellipse class="f-dk" cx="36.6" cy="28.2" rx="2.1" ry="2.7"/><circle class="f-wh" cx="24.1" cy="27.2" r="0.75"/><circle class="f-wh" cx="37.3" cy="27.2" r="0.75"/></g>
+        <path class="fx-happy s-dk" d="M21.1 29q2.3-2.6 4.6 0M34.3 29q2.3-2.6 4.6 0" stroke-width="1.7" stroke-linecap="round" opacity="0"/>
+      </g>
+      <path class="fx-nose f-dk" d="M27.6 43.3Q30 42.3 32.4 43.3Q31.8 45.7 30 46.2Q28.2 45.7 27.6 43.3Z"/>
+    </g>`,
+  init(svg) {
+    const q = qs(svg);
+    const all = q('.fx-all'), earL = q('.fx-ear-l'), earR = q('.fx-ear-r'), look = q('.fx-look'), eyes = q('.fx-eyes'), happy = q('.fx-happy'), nose = q('.fx-nose');
+    const earT = every(2.5, 6), earA = once(), sniffT = every(6, 11), sniffA = once();
+    let side = 1;
+    return s => {
+      const t = s.t;
+      if (earT(t)) { side = Math.random() < 0.5 ? -1 : 1; earA.play(t, 0.3); }
+      const ep = bump(earA.p(t)), perk = s.hv * 7;
+      T(earL, rot(-(side < 0 ? 14 * ep : 0) - perk, 21, 24));
+      T(earR, rot((side > 0 ? 14 * ep : 0) + perk, 39, 24));
+      T(all, mv(s.lx * 1.2, s.ly * 0.8) + ' ' + rot(s.lx * 5 + s.hv * 9, 30, 34));
+      T(look, mv(s.lx * 1.5, s.ly * 1.2));
+      T(eyes, at(30, 28.2, 1, 1 - 0.9 * s.blink));
+      op(eyes, 1 - s.hv); op(happy, s.hv);
+      if (sniffT(t) && !s.hover) sniffA.play(t, 0.7);
+      const sp = sniffA.p(t);
+      const sn = sp < 0 ? 0 : Math.abs(Math.sin(sp * Math.PI * 4)) * (1 - sp);
+      T(nose, at(30, 44.5, 1 + 0.18 * sn, 1 - 0.1 * sn));
+    };
+  },
+},
+{
+  id: 'minou', name: 'Minou', tagline: 'Katje',
+  desc: 'Een wit katje met oranje oortjes. Op een kat klikt iedereen.',
+  does: ['Oortjes en snorharen trillen af en toe', 'Doet een trage knipoog (bij katten betekent dat: ik vertrouw je)', 'Hover: spint en knijpt de oogjes dicht'],
+  tags: ['Schattig', 'Mascotte'],
+  svg: () => `
+    <g class="ct-all">
+      <g class="ct-ear-l"><path class="f-ink" d="M15.6 31L18.4 13.6 28.2 24Z"/><path class="f-or" d="M19.4 18.4L19.6 26.4 24.8 23.4Z"/></g>
+      <g class="ct-ear-r"><path class="f-ink" d="M44.4 31L41.6 13.6 31.8 24Z"/><path class="f-or" d="M40.6 18.4L40.4 26.4 35.2 23.4Z"/></g>
+      <ellipse class="f-ink" cx="30" cy="35.5" rx="15.6" ry="13"/>
+      <g class="s-ink" stroke-width="1.2" stroke-linecap="round">
+        <path class="ct-wl" d="M15 37.2L7.4 35.4M15 39.8L7.6 41"/>
+        <path class="ct-wr" d="M45 37.2L52.6 35.4M45 39.8L52.4 41"/>
+      </g>
+      <g class="ct-face">
+        <g class="ct-eyes"><ellipse class="f-dk" cx="24.4" cy="33" rx="2.6" ry="3.2"/><ellipse class="f-dk" cx="35.6" cy="33" rx="2.6" ry="3.2"/><circle class="f-wh" cx="25.3" cy="31.9" r="0.85"/><circle class="f-wh" cx="36.5" cy="31.9" r="0.85"/></g>
+        <path class="ct-happy s-dk" d="M22 33.6q2.4-2.6 4.8 0M33.2 33.6q2.4-2.6 4.8 0" stroke-width="1.6" stroke-linecap="round" opacity="0"/>
+        <path class="f-or s-or" d="M28.6 37.6h2.8l-1.4 1.6z" stroke-width="0.7" stroke-linejoin="round"/>
+        <path class="s-dk" d="M30 39.3q-1.2 1.9-3.1 1.2M30 39.3q1.2 1.9 3.1 1.2" stroke-width="1.2" stroke-linecap="round"/>
+      </g>
+    </g>`,
+  init(svg) {
+    const q = qs(svg);
+    const all = q('.ct-all'), earL = q('.ct-ear-l'), earR = q('.ct-ear-r'), wl = q('.ct-wl'), wr = q('.ct-wr');
+    const face = q('.ct-face'), eyes = q('.ct-eyes'), happy = q('.ct-happy');
+    const earT = every(2.5, 6), earA = once(), whT = every(3, 7), whA = once(), slowT = every(8, 14), slowA = once();
+    let earSide = 1;
+    return s => {
+      const t = s.t;
+      if (earT(t)) { earSide = Math.random() < 0.5 ? -1 : 1; earA.play(t, 0.32); }
+      const ep = bump(earA.p(t));
+      const wig = s.hv * Math.sin(t * 16) * 5;
+      T(earL, rot(-(earSide < 0 ? 16 * ep : 0) + wig, 21, 27));
+      T(earR, rot((earSide > 0 ? 16 * ep : 0) - wig, 39, 27));
+      if (whT(t)) whA.play(t, 0.4);
+      const wp = whA.p(t);
+      const w = wp < 0 ? 0 : Math.sin(wp * Math.PI * 3) * (1 - wp) * 8;
+      T(wl, rot(w, 15, 38.5));
+      T(wr, rot(-w, 45, 38.5));
+      const purr = s.hv * Math.sin(t * 70) * 0.35;
+      T(all, mv(s.lx, s.ly * 0.6 + purr) + ' ' + rot(s.lx * 4, 30, 36));
+      if (slowT(t) && !s.hover) slowA.play(t, 1.5);
+      const sp = slowA.p(t);
+      const slow = sp < 0 ? 0 : sp < 0.35 ? smooth(sp / 0.35) : sp < 0.6 ? 1 : 1 - smooth((sp - 0.6) / 0.4);
+      const close = Math.max(s.blink, slow);
+      T(face, mv(s.lx * 1.2, s.ly * 0.9));
+      T(eyes, mv(s.lx * 0.8, s.ly * 0.6) + ' ' + at(30, 33, 1, 1 - 0.9 * close));
+      op(eyes, 1 - s.hv); op(happy, s.hv);
+    };
+  },
+},
+{
+  id: 'hoot', name: 'Hoot', tagline: 'Wijs uiltje',
+  desc: 'Grote uilenogen voor een slimme assistent. Uilen staan voor wijsheid, en dat past bij AI.',
+  does: ["Kantelt nieuwsgierig z'n hoofd", 'Knippert één oog na het andere', 'Hover: ogen worden groot, pluimpjes omhoog'],
+  tags: ['Slim', 'Karakter'],
+  svg: () => `
+    <g class="ow-all">
+      <path class="ow-tufts s-ink" d="M13.4 23.4L15.6 12.6 23.2 20.6M46.6 23.4L44.4 12.6 36.8 20.6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle class="f-ink" cx="22.4" cy="31" r="9.4"/><circle class="f-ink" cx="37.6" cy="31" r="9.4"/>
+      <g class="ow-iris-l"><circle class="f-or" cx="22.4" cy="31" r="5.6"/><circle class="f-dk" cx="22.4" cy="31" r="3.2"/><circle class="f-wh" cx="23.6" cy="29.8" r="1.1"/></g>
+      <g class="ow-iris-r"><circle class="f-or" cx="37.6" cy="31" r="5.6"/><circle class="f-dk" cx="37.6" cy="31" r="3.2"/><circle class="f-wh" cx="38.8" cy="29.8" r="1.1"/></g>
+      <path class="f-acc s-acc" d="M27.5 36.4h5l-2.5 5.4z" stroke-width="1.2" stroke-linejoin="round"/>
+    </g>`,
+  init(svg) {
+    const q = qs(svg);
+    const all = q('.ow-all'), tufts = q('.ow-tufts'), irisL = q('.ow-iris-l'), irisR = q('.ow-iris-r');
+    const tiltT = every(5, 10), tiltA = once();
+    let dir = 1;
+    const lid = bt => (bt >= 0 && bt < 0.17 ? Math.sin((Math.PI * bt) / 0.17) : 0);
+    return s => {
+      const t = s.t;
+      if (tiltT(t)) { dir = Math.random() < 0.5 ? -1 : 1; tiltA.play(t, 2.4); }
+      const tilt = dir * 15 * plateau(tiltA.p(t), 0.18) + s.hv * 9;
+      T(all, mv(s.lx * 2, s.ly * 0.8) + ' ' + rot(tilt, 30, 34));
+      T(tufts, mv(0, -1.8 * s.hv));
+      const ix = s.lx * 2.6, iy = s.ly * 2.4, big = 1 + 0.2 * s.hv;
+      T(irisL, mv(ix, iy) + ' ' + at(22.4, 31, big, big * (1 - 0.92 * lid(s.bt))));
+      T(irisR, mv(ix, iy) + ' ' + at(37.6, 31, big, big * (1 - 0.92 * lid(s.bt - 0.13))));
+    };
+  },
+},
+{
+  id: 'cyclo', name: 'Cyclo', tagline: 'Eén groot oog', lookRate: 20, wander: [0.5, 1.6],
+  desc: 'Eén oog dat je overal volgt met snelle, schichtige blikjes. Een beetje raar, maar je vergeet hem niet.',
+  does: ["Schiet met z'n blik heen en weer", 'Kijkt argwanend als je muis dichtbij komt', 'Hover: pupil wordt groot'],
+  tags: ['Gedurfd', 'Opvallend'],
+  svg: uid => `
+    <defs><clipPath id="cy-${uid}"><ellipse class="cy-clip" cx="30" cy="30" rx="15.5" ry="15.5"/></clipPath></defs>
+    <g class="cy-all">
+      <g class="cy-lashes s-ink" stroke-width="1.9" stroke-linecap="round"><path d="M21.8 17.8L19.2 14.2M30 15V10.6M38.2 17.8L40.8 14.2"/></g>
+      <ellipse class="cy-sclera f-ink" cx="30" cy="30" rx="15.5" ry="15.5"/>
+      <g clip-path="url(#cy-${uid})">
+        <g class="cy-iris">
+          <circle class="f-or" cx="30" cy="30" r="7.6"/>
+          <circle cx="30" cy="30" r="7.6" stroke="#c63f00" stroke-width="0.9"/>
+          <circle class="cy-pupil f-dk" cx="30" cy="30" r="3.7"/>
+          <circle class="f-wh" cx="32.6" cy="27.4" r="1.6"/>
+          <circle class="f-wh" cx="27.9" cy="32.4" r="0.7" opacity="0.8"/>
+        </g>
+      </g>
+    </g>`,
+  init(svg) {
+    const q = qs(svg);
+    const all = q('.cy-all'), clip = q('.cy-clip'), sclera = q('.cy-sclera'), lashes = q('.cy-lashes'), iris = q('.cy-iris'), pupil = q('.cy-pupil');
+    const microT = every(0.5, 1.3);
+    let mx = 0, my = 0;
+    return s => {
+      if (microT(s.t)) { mx = rand(-0.1, 0.1); my = rand(-0.1, 0.1); }
+      const squint = s.hover ? 0 : clamp((s.near - 0.75) * 1.6, 0, 0.32);
+      const c = Math.max(s.blink, squint);
+      const ry = 15.5 * (1 - 0.94 * c);
+      const cy = 45.5 - ry - (15.5 - ry) * 0.25;
+      for (const el of [clip, sclera]) { el.setAttribute('ry', n(ry)); el.setAttribute('cy', n(cy)); }
+      T(lashes, mv(0, cy - ry - 14.5));
+      T(all, mv(s.lx * 1.2, s.ly * 1.2));
+      T(iris, mv(clamp(s.lx + mx, -1, 1) * 6.6, clamp(s.ly + my, -1, 1) * 6.6) + ' ' + at(30, 30, 1 + 0.06 * s.hv));
+      T(pupil, at(30, 30, 1 + 0.6 * s.hv));
+    };
+  },
+},
+];
+
+/* ---------- engine: one loop drives every face on the page ---------- */
+const pointer = { x: 0, y: 0, has: false, mouse: true, last: performance.now() };
+let shake = 0;
+window.addEventListener('pointermove', e => {
+  if (pointer.has) shake += Math.hypot(e.clientX - pointer.x, e.clientY - pointer.y);
+  pointer.x = e.clientX; pointer.y = e.clientY; pointer.has = true;
+  pointer.mouse = e.pointerType === 'mouse' || e.pointerType === 'pen';
+  pointer.last = performance.now();
+}, { passive: true });
+document.documentElement.addEventListener('mouseleave', () => { pointer.has = false; });
+
+const faces = [];
+const faceOf = new WeakMap();
+const io = new IntersectionObserver(entries => {
+  for (const e of entries) { const f = faceOf.get(e.target); if (f) f.visible = e.isIntersecting; }
+}, { rootMargin: '120px' });
+let uidCounter = 0;
+
+class Face {
+  constructor(char, size, tag = 'span') {
+    const now = performance.now() / 1000;
+    this.char = char;
+    const el = this.el = document.createElement(tag);
+    el.className = 'toggle';
+    el.style.width = el.style.height = size + 'px';
+    if (char.hover === 'keep') el.dataset.hover = 'keep';
+    el.innerHTML = `<svg viewBox="0 0 60 60" fill="none" aria-hidden="true">${char.svg(++uidCounter)}</svg>`;
+    this.frame = char.init(el.firstElementChild);
+    Object.assign(this, {
+      lx: 0, ly: 0, wx: 0, wy: 0, nextWander: 0, hv: 0, hover: false, hoverClass: false, touchUntil: 0,
+      blinkStart: -10, nextBlink: now + rand(1, 4), doubleAt: 0,
+      bp: Math.random(), bdur: rand(2.8, 4.6), bamp: rand(0.03, 0.055),
+      visible: true, broken: false, rect: null,
+    });
+    el.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse') this.touchUntil = performance.now() + 1600; });
+    faces.push(this);
+    faceOf.set(el, this);
+    io.observe(el);
+  }
+  destroy() {
+    io.unobserve(this.el);
+    faces.splice(faces.indexOf(this), 1);
+    this.el.remove();
+  }
+  tick(t, dt, idle, active) {
+    const r = this.rect, c = this.char;
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2, R = r.width / 2;
+    let tx = this.wx, ty = this.wy, near = 0, hoverPtr = false;
+    if (pointer.has) {
+      const dx = pointer.x - cx, dy = pointer.y - cy, d = Math.hypot(dx, dy) || 1;
+      near = clamp(1 - (d - R) / 240, 0, 1);
+      // Circle hit test with a little hysteresis, because the hover lift moves the button
+      hoverPtr = pointer.mouse && d <= R + (this.hover ? 5 : 0);
+      if (active) {
+        const reach = Math.min(d / (r.width * 0.6 + 90), 1);
+        tx = (dx / d) * reach; ty = (dy / d) * reach;
+      }
+    }
+    if (!active && t >= this.nextWander) {
+      const [a, b] = c.wander || [1.4, 3.8];
+      this.nextWander = t + rand(a, b);
+      if (Math.random() < 0.4) { this.wx = 0; this.wy = 0; }
+      else { const ang = rand(0, Math.PI * 2), m = rand(0.45, 0.9); this.wx = Math.cos(ang) * m; this.wy = Math.sin(ang) * m; }
+      tx = this.wx; ty = this.wy;
+    }
+    const rate = c.lookRate || 7;
+    this.lx = ease(this.lx, tx, rate, dt);
+    this.ly = ease(this.ly, ty, rate, dt);
+
+    if (t >= this.nextBlink) {
+      this.blinkStart = t;
+      this.nextBlink = t + rand(2.2, 6.5);
+      this.doubleAt = Math.random() < 0.25 ? t + 0.26 : 0;
+    }
+    if (this.doubleAt && t >= this.doubleAt) { this.blinkStart = t; this.doubleAt = 0; }
+    const bt = t - this.blinkStart;
+    const blink = bt < 0.17 ? Math.sin((Math.PI * bt) / 0.17) : 0;
+
+    this.hover = hoverPtr || performance.now() < this.touchUntil;
+    if (this.hover !== this.hoverClass) { this.el.classList.toggle('is-hover', this.hover); this.hoverClass = this.hover; }
+    this.hv = ease(this.hv, this.hover ? 1 : 0, 9, dt);
+
+    if (c.breath !== false) {
+      this.bp += dt / this.bdur;
+      if (this.bp >= 1) { this.bp = -rand(0.05, 0.4); this.bdur = rand(2.8, 4.6); this.bamp = rand(0.03, 0.055); }
+      this.el.style.scale = this.bp < 0 ? '1' : (1 + this.bamp * (0.5 - 0.5 * Math.cos(this.bp * Math.PI * 2))).toFixed(4);
+    }
+
+    this.frame({ t, dt, lx: this.lx, ly: this.ly, blink, bt, hv: this.hv, hover: this.hover, near, idle, shake });
+  }
+}
+
+let lastT = performance.now() / 1000;
+function loop(now) {
+  const t = now / 1000, dt = Math.min(0.05, Math.max(0, t - lastT));
+  lastT = t;
+  shake *= Math.exp(-2.5 * dt);
+  const idle = (now - pointer.last) / 1000;
+  const active = pointer.has && idle < 3.5;
+  for (const f of faces) if (f.visible && !f.broken) f.rect = f.el.getBoundingClientRect();
+  for (const f of faces) {
+    if (!f.visible || f.broken || !f.rect) continue;
+    try { f.tick(t, dt, idle, active); }
+    catch (err) { f.broken = true; console.error(`Face "${f.char.id}" stopped:`, err); }
+  }
+  requestAnimationFrame(loop);
+}
+
+/* ---------- page ---------- */
+const HEART_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/></svg>';
+const FAV_KEY = 'rovai-chat-faces-favs';
+let favs = new Set();
+try { favs = new Set(JSON.parse(localStorage.getItem(FAV_KEY) || '[]')); } catch (e) { /* storage blocked: favourites just won't persist */ }
+
+function renderFavs() {
+  const names = CHARS.filter(c => favs.has(c.id)).map(c => c.name);
+  document.getElementById('favs').innerHTML = names.length
+    ? `Jouw favorieten: <strong>${names.join(', ')}</strong>`
+    : 'Klik op <strong>♡ Favoriet</strong> bij een ventje dat je tof vindt, dan verschijnt het hier.';
+  document.querySelectorAll('.card').forEach(card => {
+    const on = favs.has(card.dataset.id);
+    card.classList.toggle('is-fav', on);
+    card.querySelector('.fav').setAttribute('aria-pressed', String(on));
+  });
+}
+function toggleFav(id) {
+  favs.has(id) ? favs.delete(id) : favs.add(id);
+  try { localStorage.setItem(FAV_KEY, JSON.stringify([...favs])); } catch (e) { /* ignore */ }
+  renderFavs();
+}
+
+const corner = document.getElementById('corner');
+let cornerFace = null, cornerIdx = 0;
+function setCorner(i) {
+  cornerIdx = (i + CHARS.length) % CHARS.length;
+  const c = CHARS[cornerIdx];
+  if (cornerFace) cornerFace.destroy();
+  cornerFace = new Face(c, 60, 'button');
+  cornerFace.el.type = 'button';
+  cornerFace.el.setAttribute('aria-label', `Volgende ventje (nu: ${c.name})`);
+  cornerFace.el.addEventListener('click', () => setCorner(cornerIdx + 1));
+  corner.querySelector('.corner-slot').replaceChildren(cornerFace.el);
+  corner.querySelector('.corner-name').textContent = c.name;
+}
+
+const strip = document.getElementById('strip-row');
+const grid = document.getElementById('grid');
+CHARS.forEach((c, i) => {
+  const item = document.createElement('button');
+  item.type = 'button';
+  item.className = 'strip-item';
+  item.setAttribute('aria-label', `Ga naar ${c.name}`);
+  item.append(new Face(c, 60).el);
+  const label = document.createElement('span');
+  label.textContent = c.name;
+  item.append(label);
+  item.addEventListener('click', () => document.getElementById('c-' + c.id).scrollIntoView({ behavior: 'smooth', block: 'center' }));
+  strip.append(item);
+
+  const card = document.createElement('article');
+  card.className = 'card';
+  card.id = 'c-' + c.id;
+  card.dataset.id = c.id;
+  card.innerHTML = `
+    <div class="stage">
+      <span class="num">${String(i + 1).padStart(2, '0')}</span>
+      <span class="stage-big"></span>
+      <span class="stage-small"><span class="slot"></span>60px</span>
+    </div>
+    <div class="card-body">
+      <h3>${c.name}</h3>
+      <p class="tagline">${c.tagline}</p>
+      <p class="desc">${c.desc}</p>
+      <ul class="does">${c.does.map(d => `<li>${d}</li>`).join('')}</ul>
+      <div class="tags">${c.tags.map(tag => `<span>${tag}</span>`).join('')}</div>
+      <div class="actions">
+        <button class="btn fav" type="button" aria-pressed="false">${HEART_ICON}<span>Favoriet</span></button>
+        <button class="btn btn-dark try" type="button">Zet in de hoek</button>
+      </div>
+    </div>`;
+  card.querySelector('.stage-big').append(new Face(c, 136).el);
+  card.querySelector('.slot').append(new Face(c, 60).el);
+  card.querySelector('.fav').addEventListener('click', () => toggleFav(c.id));
+  card.querySelector('.try').addEventListener('click', () => setCorner(i));
+  grid.append(card);
+});
+
+renderFavs();
+setCorner(0);
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

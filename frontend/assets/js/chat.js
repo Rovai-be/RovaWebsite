@@ -210,10 +210,12 @@ document.addEventListener("keydown", (event) => {
   toggleBtn.focus();
 });
 
-// Face on the toggle: breathes, blinks and now and then follows the mouse, all at random intervals so it feels alive
+// Chippy on the toggle: breathes, blinks, now and then follows the mouse and sends little data pulses
+// over its traces, all at random intervals so it feels alive
 const faceEyes = toggleBtn?.querySelector(".chat-face-eyes");
 const faceBlink = toggleBtn?.querySelector(".chat-face-blink");
 const faceSmile = toggleBtn?.querySelector(".chat-face-smile");
+const faceTraces = [...(toggleBtn?.querySelectorAll(".chat-face-trace") ?? [])];
 const FACE_MAX_OFFSET = 2.2;
 
 let faceTarget = { x: 0, y: 0 };
@@ -292,13 +294,37 @@ function breatheToggle() {
   breath.onfinish = () => setTimeout(breatheToggle, randomBetween(150, 1400));
 }
 
-if (faceEyes && faceBlink && faceSmile && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+function pulseTrace(trace, duration) {
+  trace.classList.add("is-lit");
+  setTimeout(() => trace.classList.remove("is-lit"), duration);
+}
+
+// A random trace lights up every so often, as if the chip is thinking; while hovered it goes a lot faster
+function schedulePulse() {
+  const hovered = toggleBtn.matches(":hover");
+  setTimeout(() => {
+    if (!isOpen) pulseTrace(faceTraces[Math.floor(Math.random() * faceTraces.length)], hovered ? 250 : 420);
+    schedulePulse();
+  }, hovered ? randomBetween(60, 160) : randomBetween(180, 750));
+}
+
+// On hover a wave of light runs once around the whole chip (the traces are in clockwise order)
+function pulseAround() {
+  faceTraces.forEach((trace, i) => setTimeout(() => pulseTrace(trace, 300), i * 35));
+}
+
+if (faceEyes && faceBlink && faceSmile && faceTraces.length && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
   window.addEventListener("pointermove", (event) => {
     facePointer = { clientX: event.clientX, clientY: event.clientY };
     if (!isOpen) lookAtPointer(facePointer);
   }, { passive: true });
 
+  toggleBtn.addEventListener("pointerenter", (event) => {
+    if (event.pointerType === "mouse" && !isOpen) pulseAround();
+  });
+
   setTimeout(lookAround, randomBetween(3000, 7000));
   scheduleBlink();
+  schedulePulse();
   breatheToggle();
 }
