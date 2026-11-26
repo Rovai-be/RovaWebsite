@@ -31,6 +31,17 @@
       if ((new URLSearchParams(location.search).get('lang') || localStorage.getItem('rovai-lang')) === 'en') document.documentElement.classList.add('lang-pending');
     } catch (e) {}
   </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://rovai.be/" },
+      { "@type": "ListItem", "position": 2, "name": "Projecten", "item": "https://rovai.be/pages/projecten.html" },
+      { "@type": "ListItem", "position": 3, "name": "Autohandel Didier", "item": "https://rovai.be/pages/projecten/project-didier.html" }
+    ]
+  }
+  </script>
   <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
 <body class="inner-page project-detail-page">

@@ -10,20 +10,20 @@
   >
   <meta name="theme-color" content="#111210">
   <link rel="icon" href="assets/img/favicon.png" type="image/png">
-  <link rel="canonical" href="https://roanvdmb.github.io/RovaWebsite/">
+  <link rel="canonical" href="https://rovai.be/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Rovai">
   <meta property="og:locale" content="nl_BE">
-  <meta property="og:url" content="https://roanvdmb.github.io/RovaWebsite/">
+  <meta property="og:url" content="https://rovai.be/">
   <meta property="og:title" content="Rovai | Slimme AI-automatisering voor groeiende bedrijven">
   <meta property="og:description" content="Rovai automatiseert repetitief werk, optimaliseert processen en bouwt AI-oplossingen op maat voor groeiende bedrijven.">
-  <meta property="og:image" content="https://roanvdmb.github.io/RovaWebsite/assets/img/og-cover.png">
+  <meta property="og:image" content="https://rovai.be/assets/img/og-cover.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Rovai | Slimme AI-automatisering voor groeiende bedrijven">
   <meta name="twitter:description" content="Rovai automatiseert repetitief werk, optimaliseert processen en bouwt AI-oplossingen op maat voor groeiende bedrijven.">
-  <meta name="twitter:image" content="https://roanvdmb.github.io/RovaWebsite/assets/img/og-cover.png">
+  <meta name="twitter:image" content="https://rovai.be/assets/img/og-cover.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -36,6 +36,46 @@
     try {
       if ((new URLSearchParams(location.search).get('lang') || localStorage.getItem('rovai-lang')) === 'en') document.documentElement.classList.add('lang-pending');
     } catch (e) {}
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "ProfessionalService",
+        "@id": "https://rovai.be/#organization",
+        "name": "Rovai",
+        "slogan": "Automate Tomorrow",
+        "url": "https://rovai.be/",
+        "logo": "https://rovai.be/assets/img/logo-chip.png",
+        "image": "https://rovai.be/assets/img/og-cover.png",
+        "description": "Rovai automatiseert repetitief werk, optimaliseert processen en bouwt AI-oplossingen op maat voor groeiende bedrijven.",
+        "email": "info@rovai.be",
+        "telephone": "+32492405978",
+        "vatID": "BE1042395157",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Kortrijk",
+          "addressCountry": "BE"
+        },
+        "areaServed": { "@type": "Country", "name": "België" },
+        "knowsAbout": ["AI-automatisering", "Procesautomatisering", "Chatbots", "AI-integratie", "Software op maat"],
+        "founder": [
+          { "@type": "Person", "name": "Roan Vandemeulebroucke", "jobTitle": "AI Engineer" },
+          { "@type": "Person", "name": "Jules Bracke", "jobTitle": "AI Engineer" }
+        ],
+        "sameAs": ["https://www.instagram.com/rovai.be/"]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://rovai.be/#website",
+        "url": "https://rovai.be/",
+        "name": "Rovai",
+        "inLanguage": "nl-BE",
+        "publisher": { "@id": "https://rovai.be/#organization" }
+      }
+    ]
+  }
   </script>
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
