@@ -3,15 +3,15 @@
 // otherwise that text stays Dutch on the English version.
 window.ROVAI_TRANSLATIONS_EN = {
   // Page titles
-  "Rovai | Slimme AI-automatisering voor groeiende bedrijven": "Rovai | Smart AI automation for growing businesses",
+  "AI-automatisering & chatbots voor kmo's | Rovai Kortrijk": "AI automation & chatbots for SMEs | Rovai Kortrijk",
   "Pagina niet gevonden | Rovai": "Page not found | Rovai",
-  "Over Rovai | Praktische AI, helder uitgelegd": "About Rovai | Practical AI, clearly explained",
-  "Contact | Bespreek je automatiseringsidee met Rovai": "Contact | Discuss your automation idea with Rovai",
-  "Projecten | Rovai - Praktische AI-automatisering in de praktijk": "Projects | Rovai - Practical AI automation in action",
+  "Over Rovai | AI-bureau uit Kortrijk, West-Vlaanderen": "About Rovai | AI agency from Kortrijk, West Flanders",
+  "Contact | Gratis gesprek over AI-automatisering | Rovai": "Contact | Free conversation about AI automation | Rovai",
+  "Projecten | AI-automatisering in de praktijk | Rovai": "Projects | AI automation in action | Rovai",
   "Privacybeleid | Rovai": "Privacy policy | Rovai",
   "Algemene voorwaarden | Rovai": "Terms and conditions | Rovai",
-  "Autohandel Didier | Projecten van Rovai": "Autohandel Didier | Rovai projects",
-  "Rovai Website-assistent | Projecten van Rovai": "Rovai Website Assistant | Rovai projects",
+  "Autohandel Didier: order- en voertuigautomatisering | Rovai": "Autohandel Didier: order and vehicle automation | Rovai",
+  "AI-chatbot voor je website: case Rovai-assistent | Rovai": "AI chatbot for your website: the Rovai Assistant case | Rovai",
 
   // Header and navigation
   "Ga naar de inhoud": "Skip to content",
@@ -70,7 +70,7 @@ window.ROVAI_TRANSLATIONS_EN = {
   "AI-automatisering uit Kortrijk": "AI automation from Kortrijk",
   "Van repetitief werk naar": "From repetitive work to a",
   "slimme flow.": "smart flow.",
-  "Rovai bouwt AI-automatiseringen en chatbots voor bedrijven. We nemen tijdrovend handwerk over, denk aan orders verwerken, gegevens overtypen of klantvragen beantwoorden, zodat jouw team tijd overhoudt voor het echte werk.": "Rovai builds AI automations and chatbots for businesses. We take over time-consuming manual work, like processing orders, retyping data or answering customer questions, so your team has time left for the work that matters.",
+  "Rovai bouwt AI-automatiseringen en chatbots voor kmo's en groeiende bedrijven in West-Vlaanderen en heel België. We nemen tijdrovend handwerk over, denk aan orders verwerken, gegevens overtypen of klantvragen beantwoorden, zodat jouw team tijd overhoudt voor het echte werk.": "Rovai builds AI automations and chatbots for SMEs and growing businesses in West Flanders and across Belgium. We take over time-consuming manual work, like processing orders, retyping data or answering customer questions, so your team has time left for the work that matters.",
   "Ontdek onze aanpak": "Discover our approach",
   "Onze werkwijze": "How we work",
   "Duidelijke taal": "Plain language",
